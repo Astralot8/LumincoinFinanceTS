@@ -1,0 +1,23 @@
+.form-signin {
+  max-width: 430px;
+  padding: 1rem;
+
+}
+
+.signin-logo{
+  width: 171px;
+  height: 70px;
+}
+
+.form-signin .form-floating:focus-within {
+  z-index: 2;
+}
+
+.signin-title{
+  color: #052C65;
+  font-size: 40px;
+}
+
+.link{
+  color: #0d6efd;
+}

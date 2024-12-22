@@ -1,0 +1,67 @@
+<div class="modal-window-wrapp p-4 py-md-5" id="set-interval">
+
+    <div class="modal-window rounded-4 shadow p-3 popUp">
+        <div class="text-center pb-3">
+            <p class="text-color fw-bold h5">Укажите за какой период отобразить операции:</p>
+        </div>
+        <div class="text-center m-3 pb-3">
+            <span>с: </span>
+            <input type="date" class="text-color text-center" id="startDate">
+            <span>по: </span>
+            <input type="date" class="text-color text-center" id="endDate">
+        </div>
+
+        <div class="modal-footer gap-2 border-top-0 justify-content-center">
+            <button type="button" class="btn btn-lg btn-success" id="choose-button">Выбрать</button>
+            <button type="button" class="btn btn-lg btn-danger" id="close-button">Закрыть</и>
+        </div>
+    </div>
+
+</div>
+
+
+
+<section class="px-2 px-md-4">
+    <div class="ms-2 ms-xl-5 mt-xl-5 pt-xl-5 pt-3 text-center text-xl-start">
+        <h1 class="text-color">Главная</h1>
+    </div>
+    <div
+        class="d-flex flex-wrap align-items-center justify-content-center justify-content-xl-start ms-xl-5 mx-auto gap-3 py-xl-5 py-3">
+        <button class="btn btn-outline-secondary px-3" type="button" id="today-filter">Сегодня</button>
+        <button class="btn btn-outline-secondary px-3" type="button" id="week-filter">Неделя</button>
+        <button class="btn btn-outline-secondary px-3" type="button" id="month-filter">Месяц</button>
+        <button class="btn btn-outline-secondary px-3" type="button" id="year-filter">Год</button>
+        <button class="btn btn-outline-secondary px-3" type="button" id="all-filter">Все</button>
+        <button class="btn btn-outline-secondary px-3" type="button" id="interval-filter">Интервал</button>
+        <span>с</span>
+        <div class="text-secondary pe-1" id="startDateText"><u>Дата</u></div>
+        <span>по</span>
+        <div class="text-secondary pe-1" id="endDateText"><u>Дата</u></div>
+    </div>
+    <div class="ms-xl-5 row align-items-start">
+        <div class="card border-0 col-xl-6">
+            <div class="card-header-space-between m-auto">
+                <h2 class="dashboard-pie-title text-center mb-3">
+                    Доходы
+                </h2>
+            </div>
+            <div class="card-body text-center d-flex flex-md-column align-items-center justify-content-center">
+                <div class="mb-auto">
+                    <canvas id="income"  class="chart" style="display: block; box-sizing: border-box;"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="card border-0 col-xl-6">
+            <div class="card-header-space-between">
+                <h2 class="dashboard-pie-title text-center mb-3">
+                    Расходы
+                </h2>
+            </div>
+            <div class="card-body text-center d-flex flex-md-column align-items-center justify-content-center">
+                <div class="mb-auto">
+                    <canvas id="expense" class="chart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

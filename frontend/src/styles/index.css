@@ -1,0 +1,152 @@
+@font-face {
+    font-family: Roboto;
+    src: url(/fonts/Roboto.ttf);
+}
+
+@font-face {
+    font-family: RobotoMedium;
+    src: url(../static/fonts/Robotomedium.ttf);
+}
+
+
+body {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    color: #052C65;
+    font-family: Roboto, sans-serif;
+    position: relative;
+}
+
+
+.dashboard {
+    display: grid;
+    grid-template-columns: 0.3fr 1.8fr;
+    grid-template-rows: 1fr;
+    gap: 0px 0px;
+    position: relative;
+}
+
+.header-burger {
+    display: none;
+}
+
+.dashboard-sidebar {
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: 0.1fr 0.9fr 0.1fr;
+    border-right: 1px solid #D9D9D9;
+    height: 100vh;
+}
+
+.dashboard-sidebar-menu {
+    border-top: 1px solid #D9D9D9;
+}
+
+.dashboard-sidebar-balance {
+    cursor: pointer;
+}
+
+.dashboard-sidebar-user {
+    border-top: 1px solid #D9D9D9;
+}
+
+.header-burger .navbar .container-fluid .dropdown .dropdown-menu {
+    --bs-dropdown-min-width: 0;
+    padding: 10px;
+    left: 16px;
+
+}
+
+.logout-item {
+    padding: 0;
+}
+
+.logo {
+    width: 98px;
+}
+
+.text-color {
+    color: #052C65;
+}
+
+.dashboard-pie-title {
+    color: #290661;
+}
+
+.block {
+    width: 35px;
+    height: 10px;
+    margin-right: 10px;
+}
+
+.yellow-block {
+    background-color: yellow;
+}
+
+
+.table-header-content{
+    display: grid;
+    grid-template-columns: 0.5fr 0.3fr 0.4fr 0.3fr 0.4fr 0.5fr 0.2fr;
+
+    color: #052C65;
+}
+
+.modal-window-wrapp {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background-color: rgba(0, 0, 0, 0.4);
+    z-index: 99;
+    display: none;
+}
+
+.modal-window {
+    margin: auto;
+    background-color: white;
+    
+}
+
+.popUp{
+    width: 470px;
+}
+
+.table-wrapp{
+    
+    overflow-x: hidden;
+}
+
+.table-content {
+    
+    margin: auto;
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto;
+    gap: 0px 0px;
+    grid-template-areas:
+        ". "
+        ". "
+        ". ";
+}
+.table-body-content{
+    display: grid;
+    grid-template-columns: 0.5fr 0.3fr 0.4fr 0.3fr 0.4fr 0.5fr 0.2fr;
+}
+
+.svg{
+    fill: #052C65;
+}
+
+.active-svg{
+    fill: #ffffff;
+}
+
+
+.chart{
+    width: 437px;
+    height: 467px;
+}
+
+

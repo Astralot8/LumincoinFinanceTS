@@ -1,0 +1,35 @@
+<section class="px-4 d-flex flex-column">
+    <div class="ms-2 ms-xl-5 mb-2 mb-xl-5 mt-xl-5 pt-xl-5 pt-3 text-center text-xl-start">
+        <h1 class="text-color">Редактирование дохода/расхода</h1>
+    </div>
+
+
+    <div class="ms-xl-5">
+        <form action="" class="d-flex flex-column gap-2">
+            <select class="form-select" id="type">
+                <option value="income">Доход</option>
+                <option value="expense">Расход</option>
+            </select>
+            <select class="form-select" id="category">
+                
+            </select>
+            <input type="number" class="form-control" id="amount">
+            <div class="text-danger mb-2 d-none" id="amount-error">
+                Заполните поле!
+            </div>
+            <input type="date" class="form-control" id="date">
+            <div class="text-danger mb-2 d-none" id="date-error">
+                Заполните поле!
+            </div>
+            <input type="text" class="form-control" id="comment">
+            <div class="text-danger mb-2 d-none" id="comment-error">
+                Заполните поле!
+            </div>
+            <div class="mt-3 d-flex gap-3">
+                <button type="button" class="btn btn-success" id="edit-button">Сохранить</button>
+                <a href="/operations" class="btn btn-danger">Отмена</a>
+            </div>
+        </form>
+
+    </div>
+</section>
