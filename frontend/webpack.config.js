@@ -1,11 +1,27 @@
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const CopyPlugin = require("copy-webpack-plugin");
 const path = require("path");
-const historyApiFallback = require("connect-history-api-fallback");
 
 module.exports = {
-  entry: "./src/app.js",
+  entry: "./src/app.ts",
   mode: "development",
+  devtool: 'inline-source-map',
+  module: {
+    rules: [
+      {
+        test: /\.tsx?$/,
+        use: 'ts-loader',
+        exclude: /node_modules/,
+      },
+      {
+        test: /\.css$/i,
+        use: ["style-loader", "css-loader"],
+      },
+    ],
+  },
+  resolve: {
+    extensions: ['.tsx', '.ts', '.js'],
+  },
   output: {
     path: path.resolve(__dirname, "dist"),
     filename: "app.js",
@@ -32,18 +48,7 @@ module.exports = {
           { from: "./node_modules/chart.js/dist/chart.js", to: "scripts" },
           { from: "./node_modules/bootstrap/dist/css/bootstrap.min.css", to: "css" },
           { from: "./src/styles", to: "css" },
-          
-          
-          
         ],
       }),
   ],
-  module: {
-    rules: [
-      {
-        test: /\.css$/i,
-        use: ["style-loader", "css-loader"],
-      },
-    ],
-  },
 };

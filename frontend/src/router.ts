@@ -17,6 +17,8 @@ import { ProfitDelete } from "./components/profit/profit-delete";
 import { ProfitEdit } from "./components/profit/profit-edit";
 
 export class Router {
+  private routes: 
+
   constructor() {
     this.titlePageElement = document.getElementById("page-title");
     this.contentPageElement = document.getElementById("content");
