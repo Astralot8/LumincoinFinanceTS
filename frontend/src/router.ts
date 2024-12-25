@@ -15,9 +15,16 @@ import { Profit } from "./components/profit/profit";
 import { ProfitCreate } from "./components/profit/profit-create";
 import { ProfitDelete } from "./components/profit/profit-delete";
 import { ProfitEdit } from "./components/profit/profit-edit";
+import { RoutesType } from "./types/routes.type";
 
 export class Router {
-  private routes: 
+  static openNewRoute(arg0: string) {
+    throw new Error("Method not implemented.");
+  }
+  readonly titlePageElement: HTMLElement | null;
+  readonly contentPageElement: HTMLElement | null;
+  readonly indexStyleSheetElement: HTMLElement | null;
+  private routes: RoutesType[];
 
   constructor() {
     this.titlePageElement = document.getElementById("page-title");
@@ -34,7 +41,7 @@ export class Router {
         useLayout: "/templates/layout.html",
         load: () => {
           new Dashboard(this.openNewRoute.bind(this));
-          new Layout(this.openNewRoute.bind(this));
+          new Layout();
         },
       },
       {
@@ -49,7 +56,7 @@ export class Router {
         filePathTemplate: "/templates/pages/auth/login.html",
         useLayout: false,
         load: () => {
-          new Login(this.openNewRoute.bind(this));
+          new Login();
         },
         styles: ["login.css"],
       },
@@ -59,30 +66,28 @@ export class Router {
         filePathTemplate: "/templates/pages/auth/sign-up.html",
         useLayout: false,
         load: () => {
-          new SignUp(this.openNewRoute.bind(this));
+          new SignUp();
         },
         styles: ["login.css"],
       },
       {
         route: "/logout",
         load: () => {
-          new Logout(this.openNewRoute.bind(this));
-        }
+          new Logout();
+        },
       },
       {
         route: "/profit",
         title: "Доходы",
-        filePathTemplate:
-          "/templates/pages/profit/profit.html",
+        filePathTemplate: "/templates/pages/profit/profit.html",
         useLayout: "/templates/layout.html",
         load: () => {
           new Profit(this.openNewRoute.bind(this));
-          new Layout(this.openNewRoute.bind(this));
-          
+          new Layout();
         },
       },
       {
-        route: '/openPopUp',
+        route: "/openPopUp",
       },
       {
         route: "/profit-delete",
@@ -93,34 +98,31 @@ export class Router {
       {
         route: "/profit-create",
         title: "Создание категории доходов",
-        filePathTemplate:
-          "/templates/pages/profit/profit-create.html",
+        filePathTemplate: "/templates/pages/profit/profit-create.html",
         useLayout: "/templates/layout.html",
         load: () => {
           new ProfitCreate(this.openNewRoute.bind(this));
-          new Layout(this.openNewRoute.bind(this));
+          new Layout();
         },
       },
       {
         route: "/profit-edit",
         title: "Редактирование категории доходов",
-        filePathTemplate:
-          "/templates/pages/profit/profit-edit.html",
+        filePathTemplate: "/templates/pages/profit/profit-edit.html",
         useLayout: "/templates/layout.html",
         load: () => {
           new ProfitEdit(this.openNewRoute.bind(this));
-          new Layout(this.openNewRoute.bind(this));
+          new Layout();
         },
       },
       {
         route: "/expenses",
         title: "Расходы",
-        filePathTemplate:
-          "/templates/pages/expenses/expenses.html",
+        filePathTemplate: "/templates/pages/expenses/expenses.html",
         useLayout: "/templates/layout.html",
         load: () => {
           new Expenses(this.openNewRoute.bind(this));
-          new Layout(this.openNewRoute.bind(this));
+          new Layout();
         },
       },
       {
@@ -132,34 +134,31 @@ export class Router {
       {
         route: "/expenses-edit",
         title: "Редактирование категории расходов",
-        filePathTemplate:
-          "/templates/pages/expenses/expenses-edit.html",
+        filePathTemplate: "/templates/pages/expenses/expenses-edit.html",
         useLayout: "/templates/layout.html",
         load: () => {
           new ExpensesEdit(this.openNewRoute.bind(this));
-          new Layout(this.openNewRoute.bind(this));
+          new Layout();
         },
       },
       {
         route: "/expenses-create",
         title: "Создание категории расходов",
-        filePathTemplate:
-          "/templates/pages/expenses/expenses-create.html",
+        filePathTemplate: "/templates/pages/expenses/expenses-create.html",
         useLayout: "/templates/layout.html",
         load: () => {
           new ExpensesCreate(this.openNewRoute.bind(this));
-          new Layout(this.openNewRoute.bind(this));
+          new Layout();
         },
       },
       {
         route: "/operations",
         title: "Доходы и расходы",
-        filePathTemplate:
-          "/templates/pages/operations/operations.html",
+        filePathTemplate: "/templates/pages/operations/operations.html",
         useLayout: "/templates/layout.html",
         load: () => {
           new ProfitExpenses(this.openNewRoute.bind(this));
-          new Layout(this.openNewRoute.bind(this));
+          new Layout();
         },
       },
       {
@@ -171,55 +170,57 @@ export class Router {
       {
         route: "/operations-edit",
         title: "Редактирование дохода/расхода",
-        filePathTemplate:
-          "/templates/pages/operations/operations-edit.html",
+        filePathTemplate: "/templates/pages/operations/operations-edit.html",
         useLayout: "/templates/layout.html",
         load: () => {
           new profitExpensesEdit(this.openNewRoute.bind(this));
-          new Layout(this.openNewRoute.bind(this));
+          new Layout();
         },
       },
       {
         route: "/operations-create",
         title: "Создание дохода/расхода",
-        filePathTemplate:
-          "/templates/pages/operations/operations-create.html",
+        filePathTemplate: "/templates/pages/operations/operations-create.html",
         useLayout: "/templates/layout.html",
         load: () => {
           new profitExpensesCreate(this.openNewRoute.bind(this));
-          new Layout(this.openNewRoute.bind(this));
+          new Layout();
         },
       },
-      
-      
-      
-      
     ];
   }
 
-  initEvents() {
+  private initEvents(): void {
     window.addEventListener("DOMContentLoaded", this.activateRoute.bind(this));
     window.addEventListener("popstate", this.activateRoute.bind(this));
     document.addEventListener("click", this.clickHandler.bind(this));
   }
 
-  async openNewRoute(url) {
-    const currentRoute = window.location.pathname;
+  public async openNewRoute(url: string): Promise<void> {
+    const currentRoute: string = window.location.pathname;
     history.pushState({}, "", url);
-    await this.activateRoute(null, currentRoute);
+    if (currentRoute) {
+      await this.activateRoute(null, currentRoute);
+    }
   }
 
-  async clickHandler(e) {
-    let element = null;
-    if (e.target.nodeName === "A") {
-      element = e.target;
-    } else if (e.target.parentNode.nodeName === "A") {
-      element = e.target.parentNode;
+  private async clickHandler(e: Event): Promise<void> {
+    let element: EventTarget | null = null;
+    if (e.target as HTMLElement) {
+      if ((e.target as HTMLElement).nodeName === "A") {
+        element = e.target;
+      } else if (
+        ((e.target as HTMLElement).parentNode as ParentNode).nodeName === "A"
+      ) {
+        element = (e.target as HTMLElement).parentNode;
+      }
     }
-
     if (element) {
-      e.preventDefault();
-      const url = element.href.replace(window.location.origin, "");
+      //e.preventDefault();
+      const url: string = (element as HTMLLinkElement).href.replace(
+        window.location.origin,
+        ""
+      );
       if (!url || url === "/#" || url.startsWith("javascript:void(0)")) {
         return;
       }
@@ -227,17 +228,32 @@ export class Router {
     }
   }
 
-  async activateRoute(e, oldRoute = null) {
+  private async activateRoute(
+    e?: Event | null,
+    oldRoute?: string | null
+  ): Promise<void> {
     if (oldRoute) {
-      const currentRoute = this.routes.find((item) => item.route === oldRoute);
-      if (currentRoute.styles && currentRoute.styles.length > 0) {
-        currentRoute.styles.forEach((style) => {
-          document.querySelector(`link[href='/css/${style}']`).remove();
-        });
+      const currentRoute: RoutesType | undefined = this.routes.find(
+        (item) => item.route === oldRoute
+      );
+      if (currentRoute) {
+        if (currentRoute.styles && currentRoute.styles.length > 0) {
+          currentRoute.styles.forEach((style) => {
+            const styleSheets = document.querySelector(
+              `link[href='/css/${style}']`
+            );
+            if (styleSheets) {
+              styleSheets.remove();
+            }
+          });
+        }
       }
     }
-    const urlRoute = window.location.pathname;
-    const newRoute = this.routes.find((item) => item.route === urlRoute);
+
+    const urlRoute: string = window.location.pathname;
+    const newRoute: RoutesType | undefined = this.routes.find(
+      (item: RoutesType) => item.route === urlRoute
+    );
 
     if (newRoute) {
       if (newRoute.styles && newRoute.styles.length > 0) {
@@ -250,21 +266,27 @@ export class Router {
       }
 
       if (newRoute.title) {
-        this.titlePageElement.innerText =
-          newRoute.title + " | Lumincoin Finance";
+        if (this.titlePageElement) {
+          this.titlePageElement.innerText =
+            newRoute.title + " | Lumincoin Finance";
+        }
       }
 
       if (newRoute.filePathTemplate) {
         let contentBlock = this.contentPageElement;
         if (newRoute.useLayout) {
-          this.contentPageElement.innerHTML = await fetch(
-            newRoute.useLayout
-          ).then((response) => response.text());
-          contentBlock = document.getElementById("content-layout");
+          if (this.contentPageElement) {
+            this.contentPageElement.innerHTML = await fetch(
+              newRoute.useLayout as string
+            ).then((response) => response.text());
+            contentBlock = document.getElementById("content-layout");
+          }
         }
-        contentBlock.innerHTML = await fetch(newRoute.filePathTemplate).then(
-          (response) => response.text()
-        );
+        if (contentBlock) {
+          contentBlock.innerHTML = await fetch(newRoute.filePathTemplate).then(
+            (response) => response.text()
+          );
+        }
       }
 
       if (newRoute.load && typeof newRoute.load === "function") {

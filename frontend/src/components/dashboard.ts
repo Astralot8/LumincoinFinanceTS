@@ -1,22 +1,110 @@
+import { Router } from "../router";
+import { DefaultResponseType } from "../types/default-response.type";
+import { OperationRequestType } from "../types/operation-request.type";
+import { OperationType } from "../types/operation.type";
 import { DateUtils } from "../utils/date-utils";
 import { HttpUtils } from "../utils/http-utils";
 
 import { Chart } from "chart.js/auto";
 
 export class Dashboard {
-  constructor(openNewRoute) {
-    this.openNewRoute = openNewRoute;
-    this.findElement();
+  private recordsElement: HTMLElement | null;
+  private popUpElement: HTMLElement | null;
+
+  private confirmButton: HTMLElement | null;
+  private canceledButton: HTMLElement | null;
+
+  private todayFilterButton: HTMLElement | null;
+  private weekFilterButton: HTMLElement | null;
+  private monthFilterButton: HTMLElement | null;
+  private yearFilterButton: HTMLElement | null;
+  private allFilterButton: HTMLElement | null;
+  private intervalFilterButton: HTMLElement | null;
+  private intervalPopUp: HTMLElement | null;
+
+  private chooseButton: HTMLElement | null;
+  private closeButton: HTMLElement | null;
+
+  private startDateInput: HTMLInputElement | null;
+  private endDateInput: HTMLInputElement | null;
+
+  private startDay: Date | null;
+  private endDay: Date | null;
+
+  private startDateText: HTMLElement | null;
+  private endDateText: HTMLElement | null;
+
+  private filterButtonsArray: HTMLElement[];
+  private incomeChartElement:  HTMLCanvasElement | null;
+  private expenseChartElement: HTMLCanvasElement | null;
+  private incomeChart: any;
+  private expenseChart: any;
+
+  private incomeChartArray: OperationType[];
+  private expenseChartArray: OperationType[];
+  private incomeChartArrayConcat: any;
+  private expenseChartArrayConcat: any;
+
+  constructor() {
+    this.recordsElement = document.getElementById("records");
+    this.popUpElement = document.getElementById("deleteOperation");
+
+    this.confirmButton = document.getElementById("confirm-button");
+    this.canceledButton = document.getElementById("canceled-button");
+
+    this.todayFilterButton = document.getElementById("today-filter");
+    this.weekFilterButton = document.getElementById("week-filter");
+    this.monthFilterButton = document.getElementById("month-filter");
+    this.yearFilterButton = document.getElementById("year-filter");
+    this.allFilterButton = document.getElementById("all-filter");
+    this.intervalFilterButton = document.getElementById("interval-filter");
+
+    this.intervalPopUp = document.getElementById("set-interval");
+    this.chooseButton = document.getElementById("choose-button");
+    this.closeButton = document.getElementById("close-button");
+
+    this.startDateInput = document.getElementById(
+      "startDate"
+    ) as HTMLInputElement;
+    this.endDateInput = document.getElementById("endDate") as HTMLInputElement;
+
+    this.startDay = null;
+    this.endDay = null;
+
+    this.startDateText = document.getElementById("startDateText");
+    this.endDateText = document.getElementById("endDateText");
+
+    this.filterButtonsArray = [
+      this.todayFilterButton as HTMLElement,
+      this.weekFilterButton as HTMLElement,
+      this.monthFilterButton as HTMLElement,
+      this.yearFilterButton as HTMLElement,
+      this.allFilterButton as HTMLElement,
+      this.intervalFilterButton as HTMLElement,
+    ];
+
+    this.incomeChartElement = document.getElementById("income") as HTMLCanvasElement;
+    this.expenseChartElement = document.getElementById("expense") as HTMLCanvasElement;
+    this.incomeChart = null;
+    this.expenseChart = null;
+
+    this.incomeChartArray = [];
+    this.expenseChartArray = [];
+    this.incomeChartArrayConcat = [];
+    this.expenseChartArrayConcat = [];
     this.init();
   }
 
-  init() {
-    this.todayFilterButton.classList.add("active");
+  private init(): void {
+    if (this.todayFilterButton) {
+      this.todayFilterButton.classList.add("active");
+    }
+
     this.getProfitExpenses();
     this.watchActiveButton(this.filterButtonsArray);
   }
 
-  watchActiveButton(buttonsArray) {
+  private watchActiveButton(buttonsArray: HTMLElement[]): void {
     for (let i = 0; i < buttonsArray.length; i++) {
       buttonsArray[i].addEventListener("click", (e) => {
         if (buttonsArray[i].id === "today-filter") {
@@ -45,24 +133,35 @@ export class Dashboard {
           this.getProfitExpenses(DateUtils.dateOld, DateUtils.dateNew);
         }
         if (buttonsArray[i].id === "interval-filter") {
-          this.intervalPopUp.style.display = "flex";
-          this.resetChart();
-          this.setInterval();
-          this.chooseButton.addEventListener("click", (e) => {
-            this.intervalPopUp.style.display = "none";
-            buttonsArray[i].classList.add("active");
-            this.getProfitExpenses(this.startDay, this.endDay);
-          }, { once: true });
-          this.closeButton.addEventListener("click", () => {
-            this.intervalPopUp.style.display = "none";
-          });
+          if (this.intervalPopUp && this.chooseButton && this.closeButton) {
+            this.intervalPopUp.style.display = "flex";
+            this.resetChart();
+            this.setInterval();
+            this.chooseButton.addEventListener(
+              "click",
+              () => {
+                if (this.intervalPopUp) {
+                  this.intervalPopUp.style.display = "none";
+                  buttonsArray[i].classList.add("active");
+                  this.getProfitExpenses(this.startDay, this.endDay);
+                }
+              },
+              { once: true }
+            );
+            this.closeButton.addEventListener("click", () => {
+              if (this.intervalPopUp) {
+                this.intervalPopUp.style.display = "none";
+              }
+            });
+          }
         }
       });
     }
   }
 
-  resetChart() {
-    const buttonsElements = document.querySelectorAll("button");
+  private resetChart(): void {
+    const buttonsElements: NodeListOf<HTMLButtonElement> =
+      document.querySelectorAll("button");
     buttonsElements.forEach((buttonItem) =>
       buttonItem.classList.remove("active")
     );
@@ -72,162 +171,139 @@ export class Dashboard {
     this.expenseChartArrayConcat = [];
   }
 
-  setInterval() {
-    this.startDateInput.addEventListener("change", () => {
-      this.startDateText.innerText = new Date(
-        this.startDateInput.value
-      ).toLocaleDateString();
-      this.startDay = this.startDateInput.value;
-    });
-    this.endDateInput.addEventListener("change", () => {
-      this.endDateText.innerText = new Date(
-        this.endDateInput.value
-      ).toLocaleDateString();
-      this.endDay = this.endDateInput.value;
-    });
+  private setInterval(): void {
+    if(this.startDateInput && this.endDateInput){
+      this.startDateInput.addEventListener("change", () => {
+        if(this.startDateText && this.startDateInput){
+          this.startDateText.innerText = new Date(
+            this.startDateInput.value
+          ).toLocaleDateString();
+          this.startDay = new Date (this.startDateInput.value);
+        }
+       
+      });
+      this.endDateInput.addEventListener("change", () => {
+        if(this.endDateText && this.endDateInput){
+          this.endDateText.innerText = new Date(
+            this.endDateInput.value
+          ).toLocaleDateString();
+          this.endDay = new Date (this.endDateInput.value);
+        }
+      });
+    }
+    
   }
 
-  findElement() {
-    this.recordsElement = document.getElementById("records");
-    this.popUpElement = document.getElementById("deleteOperation");
-
-    this.confirmButton = document.getElementById("confirm-button");
-    this.canceledButton = document.getElementById("canceled-button");
-
-    this.todayFilterButton = document.getElementById("today-filter");
-    this.weekFilterButton = document.getElementById("week-filter");
-    this.monthFilterButton = document.getElementById("month-filter");
-    this.yearFilterButton = document.getElementById("year-filter");
-    this.allFilterButton = document.getElementById("all-filter");
-    this.intervalFilterButton = document.getElementById("interval-filter");
-
-    this.intervalPopUp = document.getElementById("set-interval");
-    this.chooseButton = document.getElementById("choose-button");
-    this.closeButton = document.getElementById("close-button");
-
-    this.startDateInput = document.getElementById("startDate");
-    this.endDateInput = document.getElementById("endDate");
-
-    this.startDay = null;
-    this.endDay = null;
-
-    this.startDateText = document.getElementById("startDateText");
-    this.endDateText = document.getElementById("endDateText");
-
-    this.filterButtonsArray = [
-      this.todayFilterButton,
-      this.weekFilterButton,
-      this.monthFilterButton,
-      this.yearFilterButton,
-      this.allFilterButton,
-      this.intervalFilterButton,
-    ];
-
-    this.incomeChartElement = document.getElementById("income");
-    this.expenseChartElement = document.getElementById("expense");
-    this.incomeChart = null;
-    this.expenseChart = null;
-
-    this.incomeChartArray = [];
-    this.expenseChartArray = [];
-    this.incomeChartArrayConcat = [];
-    this.expenseChartArrayConcat = [];
-  }
-
-  async getProfitExpenses(dateFrom, dateTo) {
-    let result = null;
+  private async getProfitExpenses(dateFrom?: Date | null, dateTo?: Date | null): Promise<void> {
+    let result: OperationRequestType | DefaultResponseType;
     if (dateFrom && dateTo) {
-      result = await HttpUtils.request(
-        "/operations?period=interval&dateFrom=" +
-          dateFrom +
-          "&dateTo=" +
-          dateTo,
-        "GET",
-        true
-      );
-      if (result.redirect) {
-        return this.openNewRoute(result.redirect);
-      }
-
-      if (
-        result.error ||
-        !result.response ||
-        (result.response && result.response.error)
-      ) {
-        return alert(
-          "Возникла ошибка при запросе операций. Обратитесь в поддержку."
+        result = await HttpUtils.request(
+          "/operations?period=interval&dateFrom=" +
+            dateFrom +
+            "&dateTo=" +
+            dateTo,
+          "GET",
+          true
         );
-      }
+        if ((result as OperationRequestType).redirect) {
+          return Router.openNewRoute((result as OperationRequestType).redirect as string);
+        }
+  
+        if (
+          (result as DefaultResponseType).error ||
+          !(result as OperationRequestType).response ||
+          ((result as OperationRequestType).response && (result as OperationRequestType).response.error)
+        ) {
+          return alert(
+            "Возникла ошибка при запросе операций. Обратитесь в поддержку."
+          );
+        }
     } else {
-      result = await HttpUtils.request("/operations", "GET", true);
-      if (result.redirect) {
-        return this.openNewRoute(result.redirect);
-      }
-
-      if (
-        result.error ||
-        !result.response ||
-        (result.response && result.response.error)
-      ) {
-        return alert(
-          "Возникла ошибка при запросе операций. Обратитесь в поддержку."
-        );
-      }
+        result = await HttpUtils.request("/operations", "GET", true);
+        if ((result as OperationRequestType).redirect) {
+          return Router.openNewRoute((result as OperationRequestType).redirect as string);
+        }
+  
+        if (
+          (result as DefaultResponseType).error ||
+          !(result as OperationRequestType).response ||
+          ((result as OperationRequestType).response && (result as OperationRequestType).response.error)
+        ) {
+          return alert(
+            "Возникла ошибка при запросе операций. Обратитесь в поддержку."
+          );
+        }
     }
 
-    let labelObjForIncome = null;
+    let labelObjForIncome: OperationType;
 
-    let labelObjForExpense = null;
+    let labelObjForExpense: OperationType;
 
-    for (let i = 0; i < result.response.length; i++) {
-      if (result.response[i].type === "income") {
+    for (let i = 0; i < (result as OperationRequestType).response.length; i++) {
+      if ((result as OperationRequestType).response[i].type === "income") {
         labelObjForIncome = {
-          category: result.response[i].category,
-          amount: result.response[i].amount,
+          category: (result as OperationRequestType).response[i].category,
+          amount: (result as OperationRequestType).response[i].amount,
         };
-        if (result.response[i].category === labelObjForIncome.category) {
+        if ((result as OperationRequestType).response[i].category === labelObjForIncome.category) {
           labelObjForIncome.amount =
-            labelObjForIncome.amount + result.response[i].amount;
+            labelObjForIncome.amount + (result as OperationRequestType).response[i].amount;
         }
         this.incomeChartArray.push(labelObjForIncome);
       }
-      if (result.response[i].type === "expense") {
+      if ((result as OperationRequestType).response[i].type === "expense") {
         labelObjForExpense = {
-          category: result.response[i].category,
-          amount: result.response[i].amount,
+          category: (result as OperationRequestType).response[i].category,
+          amount: (result as OperationRequestType).response[i].amount,
         };
 
         this.expenseChartArray.push(labelObjForExpense);
       }
     }
 
-    let tempObjIncome = {};
+    let tempObjIncome: any;
 
-    this.incomeChartArray.map((object) => {
-      tempObjIncome[object.category] = (tempObjIncome[object.category] || 0) + object.amount; 
+    this.incomeChartArray.map((object: OperationType) => {
+      if(object.category !== undefined){
+        tempObjIncome[object.category] =
+        (tempObjIncome[object.category] || 0) + object.amount;
+      }
     });
 
-    for(let key in tempObjIncome){
-      this.incomeChartArrayConcat.push({category: key, amount: tempObjIncome[key]})
+    for (let key in tempObjIncome) {
+      this.incomeChartArrayConcat.push({
+        category: key,
+        amount: tempObjIncome[key],
+      });
     }
-    let tempObjExpense = {};
+    let tempObjExpense: any;
 
     this.expenseChartArray.map((object) => {
-      tempObjExpense[object.category] = (tempObjExpense[object.category] || 0) + object.amount; 
+      if(object.category !== undefined){
+        tempObjExpense[object.category] =
+        (tempObjExpense[object.category] || 0) + object.amount;
+      }
     });
 
-    for(let key in tempObjExpense){
-      this.expenseChartArrayConcat.push({category: key, amount: tempObjExpense[key]})
+    for (let key in tempObjExpense) {
+      this.expenseChartArrayConcat.push({
+        category: key,
+        amount: tempObjExpense[key],
+      });
     }
 
     if (this.expenseChart || this.incomeChart) {
       this.chartCleaner();
     }
 
-    this.initChartPie(this.incomeChartArrayConcat, this.expenseChartArrayConcat);
+    this.initChartPie(
+      this.incomeChartArrayConcat,
+      this.expenseChartArrayConcat
+    );
   }
-  initChartPie(incomeChartArray, expenseChartArray) {
-    const incomeConfig = {
+
+  private initChartPie(incomeChartArray: OperationType[], expenseChartArray: OperationType[]): void {
+    const incomeConfig: any = {
       type: "pie",
       data: {
         labels: incomeChartArray.map((label) => label.category),
@@ -241,7 +317,7 @@ export class Dashboard {
       },
     };
 
-    const expenseConfig = {
+    const expenseConfig: any = {
       type: "pie",
       data: {
         labels: expenseChartArray.map((label) => label.category),
@@ -255,12 +331,14 @@ export class Dashboard {
       },
     };
 
-    this.incomeChart = new Chart(this.incomeChartElement, incomeConfig);
-    this.expenseChart = new Chart(this.expenseChartElement, expenseConfig);
+    this.incomeChart = new Chart(this.incomeChartElement as HTMLCanvasElement, incomeConfig);
+    this.expenseChart = new Chart(this.expenseChartElement as HTMLCanvasElement, expenseConfig);
   }
 
-  chartCleaner() {
-    this.incomeChart.destroy();
-    this.expenseChart.destroy();
+  private chartCleaner(): void {
+    if(this.incomeChart && this.expenseChart){
+      this.incomeChart.destroy();
+      this.expenseChart.destroy();
+    }
   }
 }

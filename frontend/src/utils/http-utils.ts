@@ -2,23 +2,21 @@ import config from "../config/config";
 import { AuthUtils } from "./auth-utils";
 
 export class HttpUtils {
-  static async request(url, method = "GET", useAuth = true, body = null) {
-    const result = {
+  public static async request(url: string, method: string = "GET", useAuth: boolean = true, body: any = null): Promise<any> {
+    const result: any = {
       error: false,
       response: null,
     };
 
-    const params = {
+    const params: any = {
       method: method,
       headers: {
         "Content-type": "application/json",
         Accept: "application/json",
       },
     };
-
-    let token = null;
+    let token: string = AuthUtils.getAuthInfo(AuthUtils.accessTokenKey) as string;
     if (useAuth) {
-      token = AuthUtils.getAuthInfo(AuthUtils.accessTokenKey);
       if (token) {
         params.headers["x-auth-token"] = token;
       }
@@ -28,7 +26,7 @@ export class HttpUtils {
       params.body = JSON.stringify(body);
     }
 
-    let response = null;
+    let response: Response;
 
     try {
       response = await fetch(config.api + url, params);
@@ -44,13 +42,12 @@ export class HttpUtils {
         if (!token) {
           result.redirect = "/login";
         } else {
-          const updateTokenResult = await AuthUtils.updateAccessToken();
+          const updateTokenResult: boolean = await AuthUtils.updateAccessToken();
           if(updateTokenResult){
             return this.request(url, method, useAuth, body);
           } else{
             result.redirect = "/login";
           }
-           
         }
       }
     }
