@@ -9,7 +9,10 @@ export class ExpensesEdit {
   private expenseTitleErrorElement: HTMLElement | null;
   private id: string | null;
 
-  constructor() {
+  private openNewRoute: any;
+
+  constructor(openNewRoute: Router) {
+    this.openNewRoute = openNewRoute;
     this.editButton = document.getElementById("edit-button");
     this.expenseTitleElement = document.getElementById(
       "expense-title"
@@ -45,7 +48,7 @@ export class ExpensesEdit {
       await HttpUtils.request("/categories/expense/" + this.id, "PUT", true, {
         title: this.expenseTitleElement.value,
       });
-      Router.openNewRoute("/expenses");
+      this.openNewRoute("/expenses");
     } else {
       if(this.expenseTitleErrorElement){
         this.expenseTitleErrorElement.classList.remove("d-none");

@@ -8,8 +8,10 @@ export class Profit {
   private popUpElement: HTMLElement | null;
   private confirmButton: HTMLLinkElement | null;
   private canceledButton: HTMLElement | null;
+  private openNewRoute: any;
 
-  constructor() {
+  constructor(openNewRoute: Router) {
+    this.openNewRoute = openNewRoute;
     this.popUpElement = document.getElementById("deleteProfit");
     this.confirmButton = document.getElementById("confirm-button") as HTMLLinkElement;
     this.canceledButton = document.getElementById("canceled-button");
@@ -20,7 +22,7 @@ export class Profit {
     const result: DefaultResponseType | OperationRequestType =
       await HttpUtils.request("/categories/income", "GET", true);
     if ((result as DefaultResponseType).redirect) {
-      return Router.openNewRoute(
+      return this.openNewRoute(
         (result as DefaultResponseType).redirect as string
       );
     }

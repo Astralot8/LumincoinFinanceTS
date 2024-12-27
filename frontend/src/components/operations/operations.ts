@@ -32,7 +32,10 @@ export class ProfitExpenses {
 
   private filterButtonsArray: HTMLElement[];
 
-  constructor() {
+  private openNewRoute: any;
+
+  constructor(openNewRoute: Router) {
+    this.openNewRoute = openNewRoute;
     this.recordsElement = document.getElementById("records");
     this.popUpElement = document.getElementById("deleteOperation");
 
@@ -188,7 +191,7 @@ export class ProfitExpenses {
         true
       );
       if ((result as DefaultResponseType).redirect) {
-        return Router.openNewRoute(
+        return this.openNewRoute(
           (result as DefaultResponseType).redirect as string
         );
       }
@@ -206,7 +209,7 @@ export class ProfitExpenses {
     } else {
       result = await HttpUtils.request("/operations", "GET", true);
       if ((result as DefaultResponseType).redirect) {
-        return Router.openNewRoute(
+        return this.openNewRoute(
           (result as DefaultResponseType).redirect as string
         );
       }

@@ -4,7 +4,10 @@ import { HttpUtils } from "../../utils/http-utils";
 
 export class profitExpensesDelete {
   private id: string | null;
-  constructor(){
+  private openNewRoute: any;
+
+  constructor(openNewRoute: Router) {
+    this.openNewRoute = openNewRoute;
     const url: URLSearchParams = new URLSearchParams(window.location.search);
     this.id = url.get("id");
     this.deleteProfitExpense().then();
@@ -17,9 +20,9 @@ export class profitExpensesDelete {
     if (response.error) {
       alert(response.error);
       if(response.redirect){
-        Router.openNewRoute(response.redirect)
+        this.openNewRoute(response.redirect)
       }
     }
-    return Router.openNewRoute('/operations');
+    return this.openNewRoute('/operations');
   }
 }

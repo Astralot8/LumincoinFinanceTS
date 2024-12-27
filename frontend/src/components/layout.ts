@@ -1,4 +1,6 @@
+import { Router } from "../router";
 import { BalanceResponseType, BalanceType } from "../types/balance.type";
+import { DefaultResponseType } from "../types/default-response.type";
 import { UserInfoType } from "../types/user-info.type";
 import { AuthUtils } from "../utils/auth-utils";
 import { HttpUtils } from "../utils/http-utils";
@@ -21,7 +23,10 @@ export class Layout {
   private expensesButton: HTMLElement | null;
   private linkArray: HTMLLinkElement[];
 
-  constructor() {
+  private openNewRoute: any;
+  
+    constructor(openNewRoute: Router) {
+      this.openNewRoute = openNewRoute;
     this.balanceElement = document.getElementById("balance");
     this.modalSheet = document.getElementById("modalSheet");
     this.newBalanceValue = document.getElementById(
@@ -65,18 +70,18 @@ export class Layout {
   }
 
   private async watchBalance(): Promise<void> {
-    const result: BalanceType = await HttpUtils.request(
+    const result: BalanceType | DefaultResponseType = await HttpUtils.request(
       "/balance",
       "GET",
       true
     );
-    // if (result.redirect) {
-    //   return Router.openNewRoute(result.redirect);
-    // }
+    if ((result as DefaultResponseType).redirect) {
+      return this.openNewRoute((result as DefaultResponseType).redirect);
+    }
     if (this.balanceElement) {
       if (result) {
-        this.balanceElement.innerText = result.response.balance + "$";
-        this.balanceValue = result.response.balance;
+        this.balanceElement.innerText = (result as BalanceType).response.balance + "$";
+        this.balanceValue = (result as BalanceType).response.balance;
       } else {
         this.balanceElement.innerText = "Ошибка запроса баланса";
       }

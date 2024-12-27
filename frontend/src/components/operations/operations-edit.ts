@@ -18,7 +18,10 @@ export class profitExpensesEdit {
   private optionElement: string | null;
   private id: string | null;
 
-  constructor() {
+  private openNewRoute: any;
+
+  constructor(openNewRoute: Router) {
+    this.openNewRoute = openNewRoute;
     this.editButton = document.getElementById(
       "edit-button"
     ) as HTMLButtonElement;
@@ -119,7 +122,7 @@ export class profitExpensesEdit {
             "Возникла ошибка при редактировании операции. Обратитесь в поддержку."
           );
         }
-        return Router.openNewRoute("/operations");
+        return this.openNewRoute("/operations");
       }
     }
   }
@@ -153,7 +156,7 @@ export class profitExpensesEdit {
   private async getCategoryProfit(): Promise<void> {
     const result = await HttpUtils.request("/categories/income", "GET", true);
     if (result.redirect) {
-      return Router.openNewRoute(result.redirect);
+      return this.openNewRoute(result.redirect);
     }
 
     if (
@@ -172,7 +175,7 @@ export class profitExpensesEdit {
   private async getCategoryExpense(): Promise<void> {
     const result = await HttpUtils.request("/categories/expense", "GET", true);
     if (result.redirect) {
-      return Router.openNewRoute(result.redirect);
+      return this.openNewRoute(result.redirect);
     }
 
     if (

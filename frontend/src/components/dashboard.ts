@@ -35,7 +35,7 @@ export class Dashboard {
   private endDateText: HTMLElement | null;
 
   private filterButtonsArray: HTMLElement[];
-  private incomeChartElement:  HTMLCanvasElement | null;
+  private incomeChartElement: HTMLCanvasElement | null;
   private expenseChartElement: HTMLCanvasElement | null;
   private incomeChart: any;
   private expenseChart: any;
@@ -45,7 +45,10 @@ export class Dashboard {
   private incomeChartArrayConcat: any;
   private expenseChartArrayConcat: any;
 
-  constructor() {
+  private openNewRoute: any;
+
+  constructor(openNewRoute: Router) {
+    this.openNewRoute = openNewRoute;
     this.recordsElement = document.getElementById("records");
     this.popUpElement = document.getElementById("deleteOperation");
 
@@ -83,8 +86,12 @@ export class Dashboard {
       this.intervalFilterButton as HTMLElement,
     ];
 
-    this.incomeChartElement = document.getElementById("income") as HTMLCanvasElement;
-    this.expenseChartElement = document.getElementById("expense") as HTMLCanvasElement;
+    this.incomeChartElement = document.getElementById(
+      "income"
+    ) as HTMLCanvasElement;
+    this.expenseChartElement = document.getElementById(
+      "expense"
+    ) as HTMLCanvasElement;
     this.incomeChart = null;
     this.expenseChart = null;
 
@@ -172,67 +179,74 @@ export class Dashboard {
   }
 
   private setInterval(): void {
-    if(this.startDateInput && this.endDateInput){
+    if (this.startDateInput && this.endDateInput) {
       this.startDateInput.addEventListener("change", () => {
-        if(this.startDateText && this.startDateInput){
+        if (this.startDateText && this.startDateInput) {
           this.startDateText.innerText = new Date(
             this.startDateInput.value
           ).toLocaleDateString();
-          this.startDay = new Date (this.startDateInput.value);
+          this.startDay = new Date(this.startDateInput.value);
         }
-       
       });
       this.endDateInput.addEventListener("change", () => {
-        if(this.endDateText && this.endDateInput){
+        if (this.endDateText && this.endDateInput) {
           this.endDateText.innerText = new Date(
             this.endDateInput.value
           ).toLocaleDateString();
-          this.endDay = new Date (this.endDateInput.value);
+          this.endDay = new Date(this.endDateInput.value);
         }
       });
     }
-    
   }
 
-  private async getProfitExpenses(dateFrom?: Date | null, dateTo?: Date | null): Promise<void> {
+  private async getProfitExpenses(
+    dateFrom?: Date | null,
+    dateTo?: Date | null
+  ): Promise<void> {
     let result: OperationRequestType | DefaultResponseType;
     if (dateFrom && dateTo) {
-        result = await HttpUtils.request(
-          "/operations?period=interval&dateFrom=" +
-            dateFrom +
-            "&dateTo=" +
-            dateTo,
-          "GET",
-          true
+      result = await HttpUtils.request(
+        "/operations?period=interval&dateFrom=" +
+          dateFrom +
+          "&dateTo=" +
+          dateTo,
+        "GET",
+        true
+      );
+      if ((result as DefaultResponseType).redirect) {
+        return this.openNewRoute(
+          (result as DefaultResponseType).redirect as string
         );
-        if ((result as DefaultResponseType).redirect) {
-          return Router.openNewRoute((result as DefaultResponseType).redirect as string);
-        }
-  
-        if (
-          (result as DefaultResponseType).error ||
-          !(result as OperationRequestType).response ||
-          ((result as OperationRequestType).response && (result as OperationRequestType).response.error)
-        ) {
-          return alert(
-            "Возникла ошибка при запросе операций. Обратитесь в поддержку."
-          );
-        }
+      }
+
+      if (
+        (result as DefaultResponseType).error ||
+        !(result as OperationRequestType).response ||
+        ((result as OperationRequestType).response &&
+          (result as OperationRequestType).response.error)
+      ) {
+        return alert(
+          "Возникла ошибка при запросе операций. Обратитесь в поддержку."
+        );
+      }
     } else {
-        result = await HttpUtils.request("/operations", "GET", true);
-        if ((result as DefaultResponseType).redirect) {
-          return Router.openNewRoute((result as DefaultResponseType).redirect as string);
-        }
-  
-        if (
-          (result as DefaultResponseType).error ||
-          !(result as OperationRequestType).response ||
-          ((result as OperationRequestType).response && (result as OperationRequestType).response.error)
-        ) {
-          return alert(
-            "Возникла ошибка при запросе операций. Обратитесь в поддержку."
-          );
-        }
+      result = await HttpUtils.request("/operations", "GET", true);
+      if ((result as DefaultResponseType).redirect) {
+        return this.openNewRoute(
+          (result as DefaultResponseType).redirect as string
+        );
+      }
+
+      if (
+        (result as DefaultResponseType).error ||
+        !(result as OperationRequestType).response ||
+        ((result as OperationRequestType).response &&
+          (result as OperationRequestType).response.error)
+      ) {
+        return alert(
+          "Возникла ошибка при запросе операций. Обратитесь в поддержку."
+        );
+      }
     }
 
     let labelObjForIncome: OperationType;
@@ -245,9 +259,13 @@ export class Dashboard {
           category: (result as OperationRequestType).response[i].category,
           amount: (result as OperationRequestType).response[i].amount,
         };
-        if ((result as OperationRequestType).response[i].category === labelObjForIncome.category) {
+        if (
+          (result as OperationRequestType).response[i].category ===
+          labelObjForIncome.category
+        ) {
           labelObjForIncome.amount =
-            labelObjForIncome.amount + (result as OperationRequestType).response[i].amount;
+            labelObjForIncome.amount +
+            (result as OperationRequestType).response[i].amount;
         }
         this.incomeChartArray.push(labelObjForIncome);
       }
@@ -264,9 +282,9 @@ export class Dashboard {
     let tempObjIncome: any;
 
     this.incomeChartArray.map((object: OperationType) => {
-      if(object.category !== undefined){
+      if (object.category !== undefined) {
         tempObjIncome[object.category] =
-        (tempObjIncome[object.category] || 0) + object.amount;
+          (tempObjIncome[object.category] || 0) + object.amount;
       }
     });
 
@@ -279,9 +297,9 @@ export class Dashboard {
     let tempObjExpense: any;
 
     this.expenseChartArray.map((object) => {
-      if(object.category !== undefined){
+      if (object.category !== undefined) {
         tempObjExpense[object.category] =
-        (tempObjExpense[object.category] || 0) + object.amount;
+          (tempObjExpense[object.category] || 0) + object.amount;
       }
     });
 
@@ -302,7 +320,10 @@ export class Dashboard {
     );
   }
 
-  private initChartPie(incomeChartArray: OperationType[], expenseChartArray: OperationType[]): void {
+  private initChartPie(
+    incomeChartArray: OperationType[],
+    expenseChartArray: OperationType[]
+  ): void {
     const incomeConfig: any = {
       type: "pie",
       data: {
@@ -331,12 +352,18 @@ export class Dashboard {
       },
     };
 
-    this.incomeChart = new Chart(this.incomeChartElement as HTMLCanvasElement, incomeConfig);
-    this.expenseChart = new Chart(this.expenseChartElement as HTMLCanvasElement, expenseConfig);
+    this.incomeChart = new Chart(
+      this.incomeChartElement as HTMLCanvasElement,
+      incomeConfig
+    );
+    this.expenseChart = new Chart(
+      this.expenseChartElement as HTMLCanvasElement,
+      expenseConfig
+    );
   }
 
   private chartCleaner(): void {
-    if(this.incomeChart && this.expenseChart){
+    if (this.incomeChart && this.expenseChart) {
       this.incomeChart.destroy();
       this.expenseChart.destroy();
     }

@@ -15,7 +15,10 @@ export class SignUp {
   private repeatPasswordErrorElement: HTMLElement | null;
   private commonErrorElement: HTMLElement | null;
 
-  constructor() {
+  private openNewRoute: any;
+
+  constructor(openNewRoute: Router) {
+    this.openNewRoute = openNewRoute;
     this.fullNameElement = document.getElementById(
       "fullName"
     ) as HTMLInputElement;
@@ -35,7 +38,7 @@ export class SignUp {
 
     this.commonErrorElement = document.getElementById("common-error");
     if (AuthUtils.getAuthInfo(AuthUtils.accessTokenKey)) {
-      Router.openNewRoute("/");
+      this.openNewRoute("/");
       return;
     }
 
@@ -180,7 +183,7 @@ export class SignUp {
             }
           }
         }
-        Router.openNewRoute("/");
+        this.openNewRoute("/");
       }
     }
   }

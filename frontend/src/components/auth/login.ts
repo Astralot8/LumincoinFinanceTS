@@ -10,7 +10,7 @@ export class Login {
   private passwordErrorElement: HTMLElement | null;
   private rememberMeElement: HTMLInputElement | null;
   private commonErrorElement: HTMLElement | null;
-  private openNewRoute: Router;
+  private openNewRoute: any;
 
   constructor(openNewRoute: Router) {
     this.openNewRoute = openNewRoute;

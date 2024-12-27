@@ -2,12 +2,15 @@ import { Router } from "../../router";
 import { AuthUtils } from "../../utils/auth-utils";
 
 export class Logout {
-  constructor() {
+  private openNewRoute: any;
+
+  constructor(openNewRoute: Router) {
+    this.openNewRoute = openNewRoute;
     if (
       !AuthUtils.getAuthInfo(AuthUtils.accessTokenKey) ||
       !AuthUtils.getAuthInfo(AuthUtils.refreshTokenKey)
     ) {
-      Router.openNewRoute("/login");
+      this.openNewRoute("/login");
       return;
     }
     this.logout().then();
@@ -28,11 +31,11 @@ export class Logout {
       });
       if (result) {
         AuthUtils.removeAuthInfo();
-        Router.openNewRoute("/login");
+        this.openNewRoute("/login");
       }
     } else {
       AuthUtils.removeAuthInfo();
-      Router.openNewRoute("/login");
+      this.openNewRoute("/login");
     }
   }
 }

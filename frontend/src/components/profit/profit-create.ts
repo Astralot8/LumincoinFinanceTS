@@ -7,7 +7,10 @@ export class ProfitCreate {
   private profitTitleElement: HTMLInputElement | null;
   private profitTitleErrorElement: HTMLElement | null;
 
-  constructor() {
+  private openNewRoute: any;
+
+  constructor(openNewRoute: Router) {
+    this.openNewRoute = openNewRoute;
     this.createButton = document.getElementById("create-button");
     this.profitTitleElement = document.getElementById("profit-title") as HTMLInputElement;
     this.profitTitleErrorElement =
@@ -27,7 +30,7 @@ export class ProfitCreate {
       if (result.error) {
         alert("Не удалось создать элемент, попробуйте позже.");
       }
-      Router.openNewRoute("/profit");
+      this.openNewRoute("/profit");
       return;
     } else {
       if(this.profitTitleErrorElement){

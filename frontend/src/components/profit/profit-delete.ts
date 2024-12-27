@@ -5,7 +5,10 @@ import { HttpUtils } from "../../utils/http-utils";
 export class ProfitDelete {
   private id: string | null;
 
-  constructor() {
+  private openNewRoute: any;
+
+  constructor(openNewRoute: Router) {
+    this.openNewRoute = openNewRoute;
     const url: URLSearchParams = new URLSearchParams(window.location.search);
     this.id = url.get("id");
 
@@ -22,7 +25,7 @@ export class ProfitDelete {
     if (result.error) {
       alert("Не удалось удалить элемент, попробуйте позже.");
     }
-    Router.openNewRoute("/profit");
+    this.openNewRoute("/profit");
     return;
   }
 }

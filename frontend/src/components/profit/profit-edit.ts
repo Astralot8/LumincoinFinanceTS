@@ -10,7 +10,10 @@ export class ProfitEdit {
   private profitTitleErrorElement: HTMLElement | null;
   private id: string | null;
 
-  constructor() {
+  private openNewRoute: any;
+
+  constructor(openNewRoute: Router) {
+    this.openNewRoute = openNewRoute;
     
     this.editButton = document.getElementById("edit-button");
     this.profitTitleElement = document.getElementById("profit-title") as HTMLInputElement;
@@ -43,7 +46,7 @@ export class ProfitEdit {
       await HttpUtils.request("/categories/income/" + this.id, "PUT", true, {
         title: this.profitTitleElement.value,
       });
-      Router.openNewRoute("/profit");
+      this.openNewRoute("/profit");
     } else {
       if(this.profitTitleErrorElement){
         this.profitTitleErrorElement.classList.remove("d-none");

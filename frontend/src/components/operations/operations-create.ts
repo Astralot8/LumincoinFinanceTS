@@ -21,7 +21,10 @@ export class profitExpensesCreate {
   private profitCategory: string | null;
   private expenseCategory: string | null;
 
-  constructor() {
+  private openNewRoute: any;
+
+  constructor(openNewRoute: Router) {
+    this.openNewRoute = openNewRoute;
     this.createButton = document.getElementById(
       "create-button"
     ) as HTMLButtonElement;
@@ -86,7 +89,7 @@ export class profitExpensesCreate {
           category_id: parseInt(this.optionElementValue as string),
         });
       if ((result as DefaultResponseType).redirect) {
-        return Router.openNewRoute(
+        return this.openNewRoute(
           (result as DefaultResponseType).redirect as string
         );
       }
@@ -101,7 +104,7 @@ export class profitExpensesCreate {
           "Возникла ошибка при создании операции. Обратитесь в поддержку."
         );
       }
-      return Router.openNewRoute("/operations");
+      return this.openNewRoute("/operations");
     }
   }
 
@@ -137,7 +140,7 @@ export class profitExpensesCreate {
   private async getCategoryProfit(): Promise<void> {
     const result: DefaultResponseType | OperationRequestType = await HttpUtils.request("/categories/income", "GET", true);
     if ((result as DefaultResponseType).redirect) {
-      return Router.openNewRoute((result as DefaultResponseType).redirect as string);
+      return this.openNewRoute((result as DefaultResponseType).redirect as string);
     }
 
     if (
@@ -156,7 +159,7 @@ export class profitExpensesCreate {
   private async getCategoryExpense(): Promise<void> {
     const result: DefaultResponseType | OperationRequestType = await HttpUtils.request("/categories/expense", "GET", true);
     if ((result as DefaultResponseType).redirect) {
-      return Router.openNewRoute((result as DefaultResponseType).redirect as string);
+      return this.openNewRoute((result as DefaultResponseType).redirect as string);
     }
 
     if (

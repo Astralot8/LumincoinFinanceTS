@@ -39,8 +39,8 @@ export class Router {
         filePathTemplate: "/templates/pages/dashboard.html",
         useLayout: "/templates/layout.html",
         load: () => {
-          new Dashboard();
-          new Layout();
+          new Dashboard(this.openNewRoute());
+          new Layout(this.openNewRoute.bind(this));
         },
       },
       {
@@ -65,14 +65,14 @@ export class Router {
         filePathTemplate: "/templates/pages/auth/sign-up.html",
         useLayout: false,
         load: () => {
-          new SignUp();
+          new SignUp(this.openNewRoute.bind(this));
         },
         styles: ["login.css"],
       },
       {
         route: "/logout",
         load: () => {
-          new Logout();
+          new Logout(this.openNewRoute.bind(this));
         },
       },
       {
@@ -81,8 +81,8 @@ export class Router {
         filePathTemplate: "/templates/pages/profit/profit.html",
         useLayout: "/templates/layout.html",
         load: () => {
-          new Profit();
-          new Layout();
+          new Profit(this.openNewRoute.bind(this));
+          new Layout(this.openNewRoute.bind(this));
         },
       },
       {
@@ -91,7 +91,7 @@ export class Router {
       {
         route: "/profit-delete",
         load: () => {
-          new ProfitDelete();
+          new ProfitDelete(this.openNewRoute.bind(this));
         },
       },
       {
@@ -100,8 +100,8 @@ export class Router {
         filePathTemplate: "/templates/pages/profit/profit-create.html",
         useLayout: "/templates/layout.html",
         load: () => {
-          new ProfitCreate();
-          new Layout();
+          new ProfitCreate(this.openNewRoute.bind(this));
+          new Layout(this.openNewRoute.bind(this));
         },
       },
       {
@@ -110,8 +110,8 @@ export class Router {
         filePathTemplate: "/templates/pages/profit/profit-edit.html",
         useLayout: "/templates/layout.html",
         load: () => {
-          new ProfitEdit();
-          new Layout();
+          new ProfitEdit(this.openNewRoute.bind(this));
+          new Layout(this.openNewRoute.bind(this));
         },
       },
       {
@@ -120,14 +120,14 @@ export class Router {
         filePathTemplate: "/templates/pages/expenses/expenses.html",
         useLayout: "/templates/layout.html",
         load: () => {
-          new Expenses();
-          new Layout();
+          new Expenses(this.openNewRoute.bind(this));
+          new Layout(this.openNewRoute.bind(this));
         },
       },
       {
         route: "/expenses-delete",
         load: () => {
-          new ExpensesDelete();
+          new ExpensesDelete(this.openNewRoute.bind(this));
         },
       },
       {
@@ -136,8 +136,8 @@ export class Router {
         filePathTemplate: "/templates/pages/expenses/expenses-edit.html",
         useLayout: "/templates/layout.html",
         load: () => {
-          new ExpensesEdit();
-          new Layout();
+          new ExpensesEdit(this.openNewRoute.bind(this));
+          new Layout(this.openNewRoute.bind(this));
         },
       },
       {
@@ -146,8 +146,8 @@ export class Router {
         filePathTemplate: "/templates/pages/expenses/expenses-create.html",
         useLayout: "/templates/layout.html",
         load: () => {
-          new ExpensesCreate();
-          new Layout();
+          new ExpensesCreate(this.openNewRoute.bind(this));
+          new Layout(this.openNewRoute.bind(this));
         },
       },
       {
@@ -156,14 +156,14 @@ export class Router {
         filePathTemplate: "/templates/pages/operations/operations.html",
         useLayout: "/templates/layout.html",
         load: () => {
-          new ProfitExpenses();
-          new Layout();
+          new ProfitExpenses(this.openNewRoute.bind(this));
+          new Layout(this.openNewRoute.bind(this));
         },
       },
       {
         route: "/operations-delete",
         load: () => {
-          new profitExpensesDelete();
+          new profitExpensesDelete(this.openNewRoute.bind(this));
         },
       },
       {
@@ -172,8 +172,8 @@ export class Router {
         filePathTemplate: "/templates/pages/operations/operations-edit.html",
         useLayout: "/templates/layout.html",
         load: () => {
-          new profitExpensesEdit();
-          new Layout();
+          new profitExpensesEdit(this.openNewRoute.bind(this));
+          new Layout(this.openNewRoute.bind(this));
         },
       },
       {
@@ -182,8 +182,8 @@ export class Router {
         filePathTemplate: "/templates/pages/operations/operations-create.html",
         useLayout: "/templates/layout.html",
         load: () => {
-          new profitExpensesCreate();
-          new Layout();
+          new profitExpensesCreate(this.openNewRoute.bind(this));
+          new Layout(this.openNewRoute());
         },
       },
     ];
@@ -195,11 +195,11 @@ export class Router {
     document.addEventListener("click", this.clickHandler.bind(this));
   }
 
-  public async openNewRoute(url: string): Promise<void> {
+  public openNewRoute(url: any | null): void {
     const currentRoute: string = window.location.pathname;
     history.pushState({}, "", url);
     if (currentRoute) {
-      await this.activateRoute(null, currentRoute);
+      this.activateRoute(null, currentRoute);
     }
   }
 

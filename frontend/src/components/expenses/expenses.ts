@@ -9,7 +9,10 @@ export class Expenses {
   private confirmButton: HTMLLinkElement | null;
   private canceledButton: HTMLElement | null;
 
-  constructor() {
+  private openNewRoute: any;
+
+  constructor(openNewRoute: Router) {
+    this.openNewRoute = openNewRoute;
     this.popUpElement = document.getElementById("deleteExpense");
     this.confirmButton = document.getElementById(
       "confirm-button"
@@ -22,7 +25,7 @@ export class Expenses {
     const result: DefaultResponseType | OperationRequestType =
       await HttpUtils.request("/categories/expense", "GET", true);
     if ((result as DefaultResponseType).redirect) {
-      return Router.openNewRoute(
+      return this.openNewRoute(
         (result as DefaultResponseType).redirect as string
       );
     }
