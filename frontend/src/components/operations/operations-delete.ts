@@ -1,26 +1,25 @@
+import { Router } from "../../router";
+import { DefaultResponseType } from "../../types/default-response.type";
 import { HttpUtils } from "../../utils/http-utils";
 
 export class profitExpensesDelete {
-  constructor(openNewRoute){
-    this.openNewRoute = openNewRoute;
-    const url = new URLSearchParams(window.location.search);
+  private id: string | null;
+  constructor(){
+    const url: URLSearchParams = new URLSearchParams(window.location.search);
     this.id = url.get("id");
-    
     this.deleteProfitExpense().then();
   }
 
-  async deleteProfitExpense() {
+  private async deleteProfitExpense(): Promise<void> {
     
-    const response = await HttpUtils.request("/operations/" + this.id, "DELETE", true);
+    const response: DefaultResponseType = await HttpUtils.request("/operations/" + this.id, "DELETE", true);
 
     if (response.error) {
       alert(response.error);
-      return response.redirect ? this.openNewRoute(response.redirect) : null;
+      if(response.redirect){
+        Router.openNewRoute(response.redirect)
+      }
     }
-
-    return this.openNewRoute('/operations');
-   
-
+    return Router.openNewRoute('/operations');
   }
-  
 }

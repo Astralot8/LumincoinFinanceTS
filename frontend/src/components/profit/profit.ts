@@ -1,51 +1,68 @@
+import { Router } from "../../router";
+import { DefaultResponseType } from "../../types/default-response.type";
+import { OperationRequestType } from "../../types/operation-request.type";
+import { OperationType } from "../../types/operation.type";
 import { HttpUtils } from "../../utils/http-utils";
 
 export class Profit {
-  constructor(openNewRoute) {
+  private popUpElement: HTMLElement | null;
+  private confirmButton: HTMLLinkElement | null;
+  private canceledButton: HTMLElement | null;
+
+  constructor() {
     this.popUpElement = document.getElementById("deleteProfit");
-    this.confirmButton = document.getElementById("confirm-button");
+    this.confirmButton = document.getElementById("confirm-button") as HTMLLinkElement;
     this.canceledButton = document.getElementById("canceled-button");
-    this.openNewRoute = openNewRoute;
     this.getProfit().then();
   }
 
-  async getProfit() {
-    const result = await HttpUtils.request("/categories/income", "GET", true);
-    if (result.redirect) {
-      return this.openNewRoute(result.redirect);
+  private async getProfit(): Promise<void> {
+    const result: DefaultResponseType | OperationRequestType =
+      await HttpUtils.request("/categories/income", "GET", true);
+    if ((result as DefaultResponseType).redirect) {
+      return Router.openNewRoute(
+        (result as DefaultResponseType).redirect as string
+      );
     }
 
     if (
-      result.error ||
-      !result.response ||
-      (result.response && result.response.error)
+      (result as DefaultResponseType).error ||
+      !(result as OperationRequestType).response ||
+      ((result as OperationRequestType).response &&
+        (result as OperationRequestType).response.error)
     ) {
       return alert(
         "Возникла ошибка при запросе доходов. Обратитесь в поддержку."
       );
     }
 
-    this.showRecords(result.response);
+    this.showRecords((result as OperationRequestType).response);
   }
 
-  showRecords(profitArray) {
-    const recordsElement = document.getElementById("records");
+  private showRecords(profitArray: OperationType[]): void {
+    const recordsElement: HTMLElement | null =
+      document.getElementById("records");
     if (profitArray) {
       for (let i = 0; i < profitArray.length; i++) {
-        const cardWrappElement = document.createElement("div");
+        const cardWrappElement: HTMLElement | null =
+          document.createElement("div");
         cardWrappElement.className = "col ps-0 pe-3";
-        const cardElement = document.createElement("div");
+        const cardElement: HTMLElement | null = document.createElement("div");
         cardElement.className = "card p-3";
-        const cardHeaderElement = document.createElement("div");
+        const cardHeaderElement: HTMLElement | null =
+          document.createElement("div");
         cardHeaderElement.className = "dashboard-pie-title h3";
-        cardHeaderElement.innerText = profitArray[i].title;
-        const cardButtonWrappElement = document.createElement("div");
+        cardHeaderElement.innerText = profitArray[i].title as string;
+        const cardButtonWrappElement: HTMLElement | null =
+          document.createElement("div");
         cardButtonWrappElement.className = "d-flex gap-2";
-        const cardButtonEditElement = document.createElement("a");
+        const cardButtonEditElement: HTMLAnchorElement | null =
+          document.createElement("a");
         cardButtonEditElement.className = "btn btn-primary px-3";
         cardButtonEditElement.href = "/profit-edit?id=" + profitArray[i].id;
         cardButtonEditElement.innerText = "Редактировать";
-        const cardButtonDeleteElement = document.createElement("a");
+        const cardButtonDeleteElement: HTMLAnchorElement | null =
+          document.createElement("a");
         cardButtonDeleteElement.className = "btn btn-danger px-3 delete-button";
         cardButtonDeleteElement.href = "/openPopUp?id=" + profitArray[i].id;
         cardButtonDeleteElement.id = "delete-button";
@@ -58,17 +75,18 @@ export class Profit {
         cardElement.appendChild(cardButtonWrappElement);
 
         cardWrappElement.appendChild(cardElement);
-
-        recordsElement.appendChild(cardWrappElement);
+        if (recordsElement) {
+          recordsElement.appendChild(cardWrappElement);
+        }
       }
     }
 
-    const cardWrappAddElement = document.createElement("div");
+    const cardWrappAddElement: HTMLElement | null = document.createElement("div");
     cardWrappAddElement.className = "col ps-0 pe-3";
-    const cardAddElement = document.createElement("div");
+    const cardAddElement: HTMLElement | null = document.createElement("div");
     cardAddElement.className =
       "card p-3 h-100 justify-content-center text-center";
-    const cardButtonCreateElement = document.createElement("a");
+    const cardButtonCreateElement: HTMLAnchorElement | null = document.createElement("a");
     cardButtonCreateElement.href = "/profit-create";
     cardButtonCreateElement.innerHTML = `<svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path
@@ -78,26 +96,31 @@ export class Profit {
 
     cardAddElement.appendChild(cardButtonCreateElement);
     cardWrappAddElement.appendChild(cardAddElement);
-    recordsElement.appendChild(cardWrappAddElement);
-
+    if(recordsElement){
+      recordsElement.appendChild(cardWrappAddElement);
+    }
+    
     this.activateDeleteButton();
   }
 
-  activateDeleteButton(){
-    const deleteButtons = document.querySelectorAll(".delete-button");
+  private activateDeleteButton(): void {
+    const deleteButtons: NodeListOf<HTMLLinkElement> = document.querySelectorAll(".delete-button");
     if (deleteButtons) {
-      Array.from(deleteButtons).forEach(link => {
+      Array.from(deleteButtons).forEach((link) => {
         link.addEventListener("click", (event) => {
-          this.popUpElement.style.display = "flex";
-          event.preventDefault();
-          this.confirmButton.addEventListener("click", ()=> {
-            const url = new URLSearchParams(window.location.search);
-            const id = url.get("id")
-            this.confirmButton.href =
-              "/profit-delete?id=" + id;  
-          });
+          if(this.popUpElement && this.confirmButton){
+            this.popUpElement.style.display = "flex";
+            event.preventDefault();
+            this.confirmButton.addEventListener("click", () => {
+              const url = new URLSearchParams(window.location.search);
+              const id = url.get("id");
+              if(this.confirmButton){
+                this.confirmButton.href = "/profit-delete?id=" + id;
+              }
+            });
+          }
         });
-      })
+      });
     }
   }
 }

@@ -205,8 +205,8 @@ export class Dashboard {
           "GET",
           true
         );
-        if ((result as OperationRequestType).redirect) {
-          return Router.openNewRoute((result as OperationRequestType).redirect as string);
+        if ((result as DefaultResponseType).redirect) {
+          return Router.openNewRoute((result as DefaultResponseType).redirect as string);
         }
   
         if (
@@ -220,8 +220,8 @@ export class Dashboard {
         }
     } else {
         result = await HttpUtils.request("/operations", "GET", true);
-        if ((result as OperationRequestType).redirect) {
-          return Router.openNewRoute((result as OperationRequestType).redirect as string);
+        if ((result as DefaultResponseType).redirect) {
+          return Router.openNewRoute((result as DefaultResponseType).redirect as string);
         }
   
         if (

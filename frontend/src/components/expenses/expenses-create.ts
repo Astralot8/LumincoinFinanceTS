@@ -1,27 +1,37 @@
-
+import { Router } from "../../router";
 import { HttpUtils } from "../../utils/http-utils";
 
 export class ExpensesCreate {
-  constructor(openNewRoute) {
-    this.openNewRoute = openNewRoute;
-    this.createButton = document.getElementById("create-button");
-    this.expenseTitleElement = document.getElementById("expense-title");
-    this.expenseTitleErrorElement =
-      document.getElementById("expense-title-error");
+  private createButton: HTMLElement | null;
+  private expenseTitleElement: HTMLInputElement | null;
+  private expenseTitleErrorElement: HTMLElement | null;
 
-    this.createButton.addEventListener("click", this.createProfitItem.bind(this));
+  constructor() {
+    this.createButton = document.getElementById("create-button");
+    this.expenseTitleElement = document.getElementById(
+      "expense-title"
+    ) as HTMLInputElement;
+    this.expenseTitleErrorElement = document.getElementById(
+      "expense-title-error"
+    );
+    if (this.createButton) {
+      this.createButton.addEventListener(
+        "click",
+        this.createProfitItem.bind(this)
+      );
+    }
   }
 
-  async createProfitItem(){
-
-    if (this.expenseTitleElement.value) {
+  private async createProfitItem(): Promise<void> {
+    if (this.expenseTitleElement && this.expenseTitleElement.value) {
       await HttpUtils.request("/categories/expense", "POST", true, {
         title: this.expenseTitleElement.value,
       });
-      this.openNewRoute("/expenses");
+      Router.openNewRoute("/expenses");
     } else {
-      this.expenseTitleErrorElement.classList.remove("d-none");
+      if (this.expenseTitleErrorElement) {
+        this.expenseTitleErrorElement.classList.remove("d-none");
+      }
     }
-
   }
 }

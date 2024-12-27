@@ -10,8 +10,11 @@ export class Login {
   private passwordErrorElement: HTMLElement | null;
   private rememberMeElement: HTMLInputElement | null;
   private commonErrorElement: HTMLElement | null;
+  private openNewRoute: Router;
 
-  constructor() {
+  constructor(openNewRoute: Router) {
+    this.openNewRoute = openNewRoute;
+
     this.emailElement = document.getElementById("email") as HTMLInputElement;
     this.emailErrorElement = document.getElementById("email-error");
     this.passwordElement = document.getElementById(
@@ -30,7 +33,7 @@ export class Login {
     }
 
     if (AuthUtils.getAuthInfo(AuthUtils.accessTokenKey)) {
-      Router.openNewRoute("/");
+      this.openNewRoute("/");
       return;
     }
   }
@@ -95,7 +98,7 @@ export class Login {
             !result.response.user.id ||
             !result.response.user.lastName ||
             !result.response.user.name
-             ) {
+            ) {
             this.commonErrorElement.classList.remove("d-none");
             AuthUtils.setAuthInfo(
               result.response.tokens.accessToken,
@@ -110,8 +113,10 @@ export class Login {
           }
         }
 
-        Router.openNewRoute("/");
+        this.openNewRoute("/");
       }
     }
   }
 }
+
+

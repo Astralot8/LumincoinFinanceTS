@@ -1,40 +1,53 @@
+import { Router } from "../../router";
+import { DefaultResponseType } from "../../types/default-response.type";
+import { OperationRequestType } from "../../types/operation-request.type";
+import { OperationType } from "../../types/operation.type";
 import { HttpUtils } from "../../utils/http-utils";
 
 export class ProfitEdit {
-  constructor(openNewRoute) {
-    this.openNewRoute = openNewRoute;
+  private editButton: HTMLElement | null;
+  private profitTitleElement: HTMLInputElement | null;
+  private profitTitleErrorElement: HTMLElement | null;
+  private id: string | null;
+
+  constructor() {
+    
     this.editButton = document.getElementById("edit-button");
-    this.profitTitleElement = document.getElementById("profit-title");
+    this.profitTitleElement = document.getElementById("profit-title") as HTMLInputElement;
     this.profitTitleErrorElement =
       document.getElementById("profit-title-error");
 
-    const url = new URLSearchParams(window.location.search);
+    const url: URLSearchParams = new URLSearchParams(window.location.search);
     this.id = url.get("id");
     this.getProfitItemInfo();
-
-    this.editButton.addEventListener("click", this.editProfitItem.bind(this));
+    if(this.editButton){
+      this.editButton.addEventListener("click", this.editProfitItem.bind(this));
+    }
   }
 
-  async getProfitItemInfo() {
-    const result = await HttpUtils.request(
+  private async getProfitItemInfo(): Promise<void> {
+    const result: DefaultResponseType | OperationRequestType = await HttpUtils.request(
       "/categories/income/" + this.id,
       "GET",
       true
     );
-    console.log(result.response.title);
-    if (result || !result.response.error) {
-      this.profitTitleElement.value = result.response.title;
+    if (result || !(result as OperationRequestType).response.error) {
+      if(this.profitTitleElement){
+        this.profitTitleElement.value = (result as OperationRequestType).response.title;
+      }
     }
   }
 
-  async editProfitItem() {
-    if (this.profitTitleElement.value) {
+  private async editProfitItem(): Promise<void> {
+    if (this.profitTitleElement && this.profitTitleElement.value) {
       await HttpUtils.request("/categories/income/" + this.id, "PUT", true, {
         title: this.profitTitleElement.value,
       });
-      this.openNewRoute("/profit");
+      Router.openNewRoute("/profit");
     } else {
-      this.profitTitleErrorElement.classList.remove("d-none");
+      if(this.profitTitleErrorElement){
+        this.profitTitleErrorElement.classList.remove("d-none");
+      }
     }
   }
 }

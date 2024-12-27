@@ -1,27 +1,38 @@
-
+import { Router } from "../../router";
 import { HttpUtils } from "../../utils/http-utils";
+import { DefaultResponseType } from "../../types/default-response.type";
 
 export class ProfitCreate {
-  constructor(openNewRoute) {
-    this.openNewRoute = openNewRoute;
+  private createButton: HTMLElement | null;
+  private profitTitleElement: HTMLInputElement | null;
+  private profitTitleErrorElement: HTMLElement | null;
+
+  constructor() {
     this.createButton = document.getElementById("create-button");
-    this.profitTitleElement = document.getElementById("profit-title");
+    this.profitTitleElement = document.getElementById("profit-title") as HTMLInputElement;
     this.profitTitleErrorElement =
       document.getElementById("profit-title-error");
 
-    this.createButton.addEventListener("click", this.createProfitItem.bind(this));
+      if(this.createButton){
+        this.createButton.addEventListener("click", this.createProfitItem.bind(this));
+      }
   }
 
-  async createProfitItem(){
+  private async createProfitItem(): Promise<void>{
 
-    if (this.profitTitleElement.value) {
-      await HttpUtils.request("/categories/income", "POST", true, {
+    if (this.profitTitleElement && this.profitTitleElement.value) {
+      const result: DefaultResponseType =  await HttpUtils.request("/categories/income", "POST", true, {
         title: this.profitTitleElement.value,
       });
-      this.openNewRoute("/profit");
+      if (result.error) {
+        alert("Не удалось создать элемент, попробуйте позже.");
+      }
+      Router.openNewRoute("/profit");
+      return;
     } else {
-      this.profitTitleErrorElement.classList.remove("d-none");
+      if(this.profitTitleErrorElement){
+        this.profitTitleErrorElement.classList.remove("d-none");
+      }
     }
-
   }
 }

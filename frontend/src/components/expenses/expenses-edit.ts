@@ -1,40 +1,55 @@
+import { Router } from "../../router";
+import { DefaultResponseType } from "../../types/default-response.type";
+import { OperationRequestType } from "../../types/operation-request.type";
 import { HttpUtils } from "../../utils/http-utils";
 
 export class ExpensesEdit {
-  constructor(openNewRoute) {
-    this.openNewRoute = openNewRoute;
-    this.editButton = document.getElementById("edit-button");
-    this.expenseTitleElement = document.getElementById("expense-title");
-    this.expenseTitleErrorElement =
-      document.getElementById("expense-title-error");
+  private editButton: HTMLElement | null;
+  private expenseTitleElement: HTMLInputElement | null;
+  private expenseTitleErrorElement: HTMLElement | null;
+  private id: string | null;
 
-    const url = new URLSearchParams(window.location.search);
+  constructor() {
+    this.editButton = document.getElementById("edit-button");
+    this.expenseTitleElement = document.getElementById(
+      "expense-title"
+    ) as HTMLInputElement;
+    this.expenseTitleErrorElement = document.getElementById(
+      "expense-title-error"
+    );
+
+    const url: URLSearchParams = new URLSearchParams(window.location.search);
     this.id = url.get("id");
     this.getExpenseItemInfo();
-
-    this.editButton.addEventListener("click", this.editExpenseItem.bind(this));
+    if (this.editButton) {
+      this.editButton.addEventListener(
+        "click",
+        this.editExpenseItem.bind(this)
+      );
+    }
   }
 
-  async getExpenseItemInfo() {
-    const result = await HttpUtils.request(
+  private async getExpenseItemInfo(): Promise<void> {
+    const result: DefaultResponseType | OperationRequestType = await HttpUtils.request(
       "/categories/expense/" + this.id,
       "GET",
       true
     );
-    console.log(result.response.title);
-    if (result || !result.response.error) {
-      this.expenseTitleElement.value = result.response.title;
+    if ((result || !(result as OperationRequestType).response.error) && this.expenseTitleElement) {
+      this.expenseTitleElement.value = (result as OperationRequestType).response.title;
     }
   }
 
-  async editExpenseItem() {
-    if (this.expenseTitleElement.value) {
+  private async editExpenseItem(): Promise<void> {
+    if (this.expenseTitleElement && this.expenseTitleElement.value) {
       await HttpUtils.request("/categories/expense/" + this.id, "PUT", true, {
         title: this.expenseTitleElement.value,
       });
-      this.openNewRoute("/expenses");
+      Router.openNewRoute("/expenses");
     } else {
-      this.expenseTitleErrorElement.classList.remove("d-none");
+      if(this.expenseTitleErrorElement){
+        this.expenseTitleErrorElement.classList.remove("d-none");
+      }
     }
   }
 }

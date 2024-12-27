@@ -1,26 +1,28 @@
+import { Router } from "../../router";
+import { DefaultResponseType } from "../../types/default-response.type";
 import { HttpUtils } from "../../utils/http-utils";
 
 export class ProfitDelete {
-  constructor(openNewRoute){
-    this.openNewRoute = openNewRoute;
-    const url = new URLSearchParams(window.location.search);
+  private id: string | null;
+
+  constructor() {
+    const url: URLSearchParams = new URLSearchParams(window.location.search);
     this.id = url.get("id");
-    
+
     this.deleteProfit().then();
   }
 
-  async deleteProfit() {
-    
-    const response = await HttpUtils.request("/categories/income/" + this.id, "DELETE", true);
+  private async deleteProfit(): Promise<void> {
+    const result: DefaultResponseType = await HttpUtils.request(
+      "/categories/income/" + this.id,
+      "DELETE",
+      true
+    );
 
-    if (response.error) {
-      alert(response.error);
-      return response.redirect ? this.openNewRoute(response.redirect) : null;
+    if (result.error) {
+      alert("Не удалось удалить элемент, попробуйте позже.");
     }
-
-    return this.openNewRoute('/profit');
-   
-
+    Router.openNewRoute("/profit");
+    return;
   }
-  
 }
