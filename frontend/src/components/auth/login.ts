@@ -1,5 +1,6 @@
 import { Router } from "../../router";
 import { LoginRequestType } from "../../types/login-response.type";
+import { openRoute } from "../../types/routes.type";
 import { AuthUtils } from "../../utils/auth-utils";
 import { HttpUtils } from "../../utils/http-utils";
 
@@ -10,10 +11,10 @@ export class Login {
   private passwordErrorElement: HTMLElement | null;
   private rememberMeElement: HTMLInputElement | null;
   private commonErrorElement: HTMLElement | null;
-  private openNewRoute: any;
+  private openNewRoute: openRoute;
 
-  constructor(openNewRoute: Router) {
-    this.openNewRoute = openNewRoute;
+  constructor(fn: openRoute) {
+    this.openNewRoute = fn;
 
     this.emailElement = document.getElementById("email") as HTMLInputElement;
     this.emailErrorElement = document.getElementById("email-error");
@@ -46,7 +47,6 @@ export class Login {
       this.passwordElement &&
       this.passwordErrorElement
     ) {
-      isValid = false;
       if (
         this.emailElement.value &&
         this.emailElement.value.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)
@@ -89,34 +89,21 @@ export class Login {
             rememberMe: this.rememberMeElement.checked,
           }
         );
+        
         if (result.response && result.response.tokens && result.response.user) {
-          if (
-            result.error ||
-            !result.response ||
-            !result.response.tokens.accessToken ||
-            !result.response.tokens.refreshToken ||
-            !result.response.user.id ||
-            !result.response.user.lastName ||
-            !result.response.user.name
-            ) {
-            this.commonErrorElement.classList.remove("d-none");
-            AuthUtils.setAuthInfo(
-              result.response.tokens.accessToken,
-              result.response.tokens.refreshToken,
-              {
-                id: result.response.user.id,
-                lastName: result.response.user.lastName,
-                name: result.response.user.name,
-              }
-            );
-            return;
-          }
+          this.commonErrorElement.classList.remove("d-none");
+          AuthUtils.setAuthInfo(
+            result.response.tokens.accessToken,
+            result.response.tokens.refreshToken,
+            {
+              id: result.response.user.id,
+              lastName: result.response.user.lastName,
+              name: result.response.user.name,
+            }
+          );
         }
-
         this.openNewRoute("/");
       }
     }
   }
 }
-
-

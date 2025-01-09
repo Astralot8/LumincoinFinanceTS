@@ -2,6 +2,7 @@ import { Router } from "../../router";
 import { DefaultResponseType } from "../../types/default-response.type";
 import { OperationRequestType } from "../../types/operation-request.type";
 import { OperationType } from "../../types/operation.type";
+import { openRoute } from "../../types/routes.type";
 import { HttpUtils } from "../../utils/http-utils";
 
 export class Expenses {
@@ -9,10 +10,10 @@ export class Expenses {
   private confirmButton: HTMLLinkElement | null;
   private canceledButton: HTMLElement | null;
 
-  private openNewRoute: any;
-
-  constructor(openNewRoute: Router) {
-    this.openNewRoute = openNewRoute;
+  private openNewRoute: openRoute;
+  
+    constructor(fn: openRoute) {
+      this.openNewRoute = fn;
     this.popUpElement = document.getElementById("deleteExpense");
     this.confirmButton = document.getElementById(
       "confirm-button"
@@ -30,15 +31,8 @@ export class Expenses {
       );
     }
 
-    if (
-      (result as DefaultResponseType).error ||
-      !(result as OperationRequestType).response ||
-      ((result as OperationRequestType).response &&
-        (result as OperationRequestType).response.error)
-    ) {
-      return alert(
-        "Возникла ошибка при запросе расходов. Обратитесь в поддержку."
-      );
+    if ((result as DefaultResponseType).error) {
+      console.log((result as DefaultResponseType).message);
     }
 
     this.showRecords((result as OperationRequestType).response);

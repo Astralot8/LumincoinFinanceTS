@@ -2,6 +2,7 @@ import { Router } from "../../router";
 import { DefaultResponseType } from "../../types/default-response.type";
 import { OperationRequestType } from "../../types/operation-request.type";
 import { OperationType } from "../../types/operation.type";
+import { openRoute } from "../../types/routes.type";
 import { DateUtils } from "../../utils/date-utils";
 import { HttpUtils } from "../../utils/http-utils";
 
@@ -32,14 +33,16 @@ export class ProfitExpenses {
 
   private filterButtonsArray: HTMLElement[];
 
-  private openNewRoute: any;
+  private openNewRoute: openRoute;
 
-  constructor(openNewRoute: Router) {
-    this.openNewRoute = openNewRoute;
+  constructor(fn: openRoute) {
+    this.openNewRoute = fn;
     this.recordsElement = document.getElementById("records");
     this.popUpElement = document.getElementById("deleteOperation");
 
-    this.confirmButton = document.getElementById("confirm-button") as HTMLLinkElement;
+    this.confirmButton = document.getElementById(
+      "confirm-button"
+    ) as HTMLLinkElement;
     this.canceledButton = document.getElementById("canceled-button");
 
     this.todayFilterButton = document.getElementById("today-filter");
@@ -73,73 +76,75 @@ export class ProfitExpenses {
       this.intervalFilterButton as HTMLElement,
     ];
 
-    this.init();
-  }
-
-  init() {
     if (this.todayFilterButton) {
       this.todayFilterButton.classList.add("active");
     }
 
-    this.getProfitExpenses().then();
+    this.getProfitExpenses();
     this.watchActiveButton(this.filterButtonsArray);
+    
   }
 
-  private watchActiveButton(buttonsArray: HTMLElement[]): void {
-    for (let i = 0; i < buttonsArray.length; i++) {
-      buttonsArray[i].addEventListener("click", (e) => {
-        if (buttonsArray[i].id === "today-filter") {
-          this.resetTable();
-          buttonsArray[i].classList.add("active");
-          this.getProfitExpenses();
-        }
-        if (buttonsArray[i].id === "week-filter") {
-          this.resetTable();
-          buttonsArray[i].classList.add("active");
-          this.getProfitExpenses(DateUtils.dateFrom, DateUtils.dateWeek);
-        }
-        if (buttonsArray[i].id === "month-filter") {
-          this.resetTable();
-          buttonsArray[i].classList.add("active");
-          this.getProfitExpenses(DateUtils.dateFrom, DateUtils.dateMonth);
-        }
-        if (buttonsArray[i].id === "year-filter") {
-          this.resetTable();
-          buttonsArray[i].classList.add("active");
-          this.getProfitExpenses(DateUtils.dateFrom, DateUtils.dateYear);
-        }
-        if (buttonsArray[i].id === "all-filter") {
-          this.resetTable();
-          buttonsArray[i].classList.add("active");
-          this.getProfitExpenses(DateUtils.dateOld, DateUtils.dateNew);
-        }
-        if (buttonsArray[i].id === "interval-filter") {
-          if (this.intervalPopUp && this.chooseButton) {
-            this.intervalPopUp.style.display = "flex";
-            this.setInterval();
-            this.chooseButton.addEventListener(
-              "click",
-              () => {
-                if (this.intervalPopUp) {
-                  this.intervalPopUp.style.display = "none";
-                  this.resetTable();
-                  buttonsArray[i].classList.add("active");
-                  this.getProfitExpenses(this.startDay, this.endDay);
-                }
-              },
-              { once: true }
-            );
-          }
 
-          if (this.intervalPopUp && this.closeButton) {
-            this.closeButton.addEventListener("click", () => {
-              if (this.intervalPopUp) {
-                this.intervalPopUp.style.display = "none";
+  private watchActiveButton(buttonsArray: HTMLElement[] | null): void {
+    if (buttonsArray) {
+      for (let i = 0; i < buttonsArray.length; i++) {
+        if (buttonsArray[i]) {
+          buttonsArray[i].addEventListener("click", (e) => {
+            if (buttonsArray[i].id === "today-filter") {
+              this.resetTable();
+              buttonsArray[i].classList.add("active");
+              this.getProfitExpenses();
+            }
+            if (buttonsArray[i].id === "week-filter") {
+              this.resetTable();
+              buttonsArray[i].classList.add("active");
+              this.getProfitExpenses(DateUtils.dateFrom, DateUtils.dateWeek);
+            }
+            if (buttonsArray[i].id === "month-filter") {
+              this.resetTable();
+              buttonsArray[i].classList.add("active");
+              this.getProfitExpenses(DateUtils.dateFrom, DateUtils.dateMonth);
+            }
+            if (buttonsArray[i].id === "year-filter") {
+              this.resetTable();
+              buttonsArray[i].classList.add("active");
+              this.getProfitExpenses(DateUtils.dateFrom, DateUtils.dateYear);
+            }
+            if (buttonsArray[i].id === "all-filter") {
+              this.resetTable();
+              buttonsArray[i].classList.add("active");
+              this.getProfitExpenses(DateUtils.dateOld, DateUtils.dateNew);
+            }
+            if (buttonsArray[i].id === "interval-filter") {
+              if (this.intervalPopUp && this.chooseButton) {
+                this.intervalPopUp.style.display = "flex";
+                this.setInterval();
+                this.chooseButton.addEventListener(
+                  "click",
+                  () => {
+                    if (this.intervalPopUp) {
+                      this.intervalPopUp.style.display = "none";
+                      this.resetTable();
+                      buttonsArray[i].classList.add("active");
+                      this.getProfitExpenses(this.startDay, this.endDay);
+                    }
+                  },
+                  { once: true }
+                );
               }
-            });
-          }
+
+              if (this.intervalPopUp && this.closeButton) {
+                this.closeButton.addEventListener("click", () => {
+                  if (this.intervalPopUp) {
+                    this.intervalPopUp.style.display = "none";
+                  }
+                });
+              }
+            }
+          });
         }
-      });
+      }
     }
   }
 
@@ -196,15 +201,8 @@ export class ProfitExpenses {
         );
       }
 
-      if (
-        (result as DefaultResponseType).error ||
-        !(result as OperationRequestType).response ||
-        ((result as OperationRequestType).response &&
-          (result as OperationRequestType).response.error)
-      ) {
-        return alert(
-          "Возникла ошибка при запросе операций. Обратитесь в поддержку."
-        );
+      if ((result as DefaultResponseType).error) {
+        console.log((result as DefaultResponseType).message);
       }
     } else {
       result = await HttpUtils.request("/operations", "GET", true);
@@ -214,15 +212,8 @@ export class ProfitExpenses {
         );
       }
 
-      if (
-        (result as DefaultResponseType).error ||
-        !(result as OperationRequestType).response ||
-        ((result as OperationRequestType).response &&
-          (result as OperationRequestType).response.error)
-      ) {
-        return alert(
-          "Возникла ошибка при запросе операций. Обратитесь в поддержку."
-        );
+      if ((result as DefaultResponseType).error) {
+        console.log((result as DefaultResponseType).message);
       }
     }
 
@@ -303,8 +294,8 @@ export class ProfitExpenses {
             this.popUpElement.style.display = "flex";
             event.preventDefault();
             this.confirmButton.addEventListener("click", () => {
-              const url = new URLSearchParams(window.location.search);
-              const id = url.get("id");
+              const url: URLSearchParams = new URLSearchParams(window.location.search);
+              const id: string | null = url.get("id");
               if (this.confirmButton) {
                 this.confirmButton.href = "/operations-delete?id=" + id;
               }

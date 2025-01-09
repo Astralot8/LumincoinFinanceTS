@@ -1,14 +1,15 @@
 import { Router } from "../../router";
 import { DefaultResponseType } from "../../types/default-response.type";
+import { openRoute } from "../../types/routes.type";
 import { HttpUtils } from "../../utils/http-utils";
 
 export class ProfitDelete {
   private id: string | null;
 
-  private openNewRoute: any;
-
-  constructor(openNewRoute: Router) {
-    this.openNewRoute = openNewRoute;
+  private openNewRoute: openRoute;
+  
+    constructor(fn: openRoute) {
+      this.openNewRoute = fn;
     const url: URLSearchParams = new URLSearchParams(window.location.search);
     this.id = url.get("id");
 

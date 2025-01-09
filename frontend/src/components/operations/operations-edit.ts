@@ -2,6 +2,7 @@ import { Router } from "../../router";
 import { DefaultResponseType } from "../../types/default-response.type";
 import { OperationRequestType } from "../../types/operation-request.type";
 import { OperationType } from "../../types/operation.type";
+import { openRoute } from "../../types/routes.type";
 import { HttpUtils } from "../../utils/http-utils";
 
 export class profitExpensesEdit {
@@ -18,10 +19,10 @@ export class profitExpensesEdit {
   private optionElement: string | null;
   private id: string | null;
 
-  private openNewRoute: any;
+  private openNewRoute: openRoute;
 
-  constructor(openNewRoute: Router) {
-    this.openNewRoute = openNewRoute;
+  constructor(fn: openRoute) {
+    this.openNewRoute = fn;
     this.editButton = document.getElementById(
       "edit-button"
     ) as HTMLButtonElement;
@@ -199,19 +200,21 @@ export class profitExpensesEdit {
       const option: HTMLOptionElement | null = document.createElement("option");
       option.value = (categoriesArray[i].id as number).toString();
       option.innerText = categoriesArray[i].title as string;
-      if(this.categoryElement){
+      if (this.categoryElement) {
         this.categoryElement.appendChild(option);
       }
       if (categoryName === categoriesArray[i].title) {
-        if(this.categoryElement){
-          this.categoryElement.value = (categoriesArray[i].id as number).toString();
+        if (this.categoryElement) {
+          this.categoryElement.value = (
+            categoriesArray[i].id as number
+          ).toString();
         }
         this.optionElementValue = (categoriesArray[i].id as number).toString();
       }
     }
-    if(this.categoryElement){
+    if (this.categoryElement) {
       this.categoryElement.addEventListener("change", (e: Event) => {
-        if(e.target){
+        if (e.target) {
           this.optionElementValue = (e.target as HTMLOptionElement).value;
         }
       });

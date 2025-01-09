@@ -1,4 +1,5 @@
 import { Router } from "../../router";
+import { openRoute } from "../../types/routes.type";
 import { HttpUtils } from "../../utils/http-utils";
 
 export class ExpensesCreate {
@@ -6,10 +7,10 @@ export class ExpensesCreate {
   private expenseTitleElement: HTMLInputElement | null;
   private expenseTitleErrorElement: HTMLElement | null;
 
-  private openNewRoute: any;
-
-  constructor(openNewRoute: Router) {
-    this.openNewRoute = openNewRoute;
+  private openNewRoute: openRoute;
+  
+    constructor(fn: openRoute) {
+      this.openNewRoute = fn;
     this.createButton = document.getElementById("create-button");
     this.expenseTitleElement = document.getElementById(
       "expense-title"

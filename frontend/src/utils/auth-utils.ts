@@ -54,7 +54,7 @@ export class AuthUtils {
           "Content-type": "application/json",
           Accept: "application/json",
         },
-        body: JSON.stringify({ refreshTokenKey: refreshToken }),
+        body: JSON.stringify({ refreshToken: refreshToken }),
       });
       if (response && response.status === 200) {
         const tokensObj: RefreshResponseType | null = await response.json();

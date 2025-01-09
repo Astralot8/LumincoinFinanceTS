@@ -1,6 +1,7 @@
 import { Router } from "../router";
 import { BalanceResponseType, BalanceType } from "../types/balance.type";
 import { DefaultResponseType } from "../types/default-response.type";
+import { openRoute } from "../types/routes.type";
 import { UserInfoType } from "../types/user-info.type";
 import { AuthUtils } from "../utils/auth-utils";
 import { HttpUtils } from "../utils/http-utils";
@@ -23,10 +24,10 @@ export class Layout {
   private expensesButton: HTMLElement | null;
   private linkArray: HTMLLinkElement[];
 
-  private openNewRoute: any;
+  private openNewRoute: openRoute;
   
-    constructor(openNewRoute: Router) {
-      this.openNewRoute = openNewRoute;
+    constructor(fn: openRoute) {
+      this.openNewRoute = fn;
     this.balanceElement = document.getElementById("balance");
     this.modalSheet = document.getElementById("modalSheet");
     this.newBalanceValue = document.getElementById(
@@ -76,7 +77,7 @@ export class Layout {
       true
     );
     if ((result as DefaultResponseType).redirect) {
-      return this.openNewRoute((result as DefaultResponseType).redirect);
+      return this.openNewRoute((result as DefaultResponseType).redirect as string);
     }
     if (this.balanceElement) {
       if (result) {

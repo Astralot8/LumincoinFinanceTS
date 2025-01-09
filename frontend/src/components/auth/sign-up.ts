@@ -1,5 +1,6 @@
 import { Router } from "../../router";
 import { LoginRequestType } from "../../types/login-response.type";
+import { openRoute } from "../../types/routes.type";
 import { SignupRequestType } from "../../types/signup-response.type";
 import { AuthUtils } from "../../utils/auth-utils";
 import { HttpUtils } from "../../utils/http-utils";
@@ -15,10 +16,10 @@ export class SignUp {
   private repeatPasswordErrorElement: HTMLElement | null;
   private commonErrorElement: HTMLElement | null;
 
-  private openNewRoute: any;
+  private openNewRoute: openRoute;
 
-  constructor(openNewRoute: Router) {
-    this.openNewRoute = openNewRoute;
+  constructor(fn: openRoute) {
+    this.openNewRoute = fn;
     this.fullNameElement = document.getElementById(
       "fullName"
     ) as HTMLInputElement;

@@ -1,7 +1,7 @@
-import { Router } from "../../router";
 import { DefaultResponseType } from "../../types/default-response.type";
 import { OperationRequestType } from "../../types/operation-request.type";
 import { OperationType } from "../../types/operation.type";
+import { openRoute } from "../../types/routes.type";
 import { HttpUtils } from "../../utils/http-utils";
 
 export class profitExpensesCreate {
@@ -21,10 +21,10 @@ export class profitExpensesCreate {
   private profitCategory: string | null;
   private expenseCategory: string | null;
 
-  private openNewRoute: any;
+  private openNewRoute: openRoute;
 
-  constructor(openNewRoute: Router) {
-    this.openNewRoute = openNewRoute;
+  constructor(fn: openRoute) {
+    this.openNewRoute = fn;
     this.createButton = document.getElementById(
       "create-button"
     ) as HTMLButtonElement;
@@ -94,15 +94,8 @@ export class profitExpensesCreate {
         );
       }
 
-      if (
-        (result as DefaultResponseType).error ||
-        !(result as OperationRequestType).response ||
-        ((result as OperationRequestType).response &&
-          (result as OperationRequestType).response.error)
-      ) {
-        return alert(
-          "Возникла ошибка при создании операции. Обратитесь в поддержку."
-        );
+      if ((result as DefaultResponseType).error) {
+        console.log((result as DefaultResponseType).message);
       }
       return this.openNewRoute("/operations");
     }
@@ -138,45 +131,39 @@ export class profitExpensesCreate {
   }
 
   private async getCategoryProfit(): Promise<void> {
-    const result: DefaultResponseType | OperationRequestType = await HttpUtils.request("/categories/income", "GET", true);
+    const result: DefaultResponseType | OperationRequestType =
+      await HttpUtils.request("/categories/income", "GET", true);
     if ((result as DefaultResponseType).redirect) {
-      return this.openNewRoute((result as DefaultResponseType).redirect as string);
+      return this.openNewRoute(
+        (result as DefaultResponseType).redirect as string
+      );
     }
 
-    if (
-      (result as DefaultResponseType).error ||
-      !(result as OperationRequestType).response ||
-      ((result as OperationRequestType).response && (result as OperationRequestType).response.error)
-    ) {
-      return alert(
-        "Возникла ошибка при запросе операции. Обратитесь в поддержку."
-      );
+    if ((result as DefaultResponseType).error) {
+      console.log((result as DefaultResponseType).message);
     }
 
     this.showRecords((result as OperationRequestType).response);
   }
 
   private async getCategoryExpense(): Promise<void> {
-    const result: DefaultResponseType | OperationRequestType = await HttpUtils.request("/categories/expense", "GET", true);
+    const result: DefaultResponseType | OperationRequestType =
+      await HttpUtils.request("/categories/expense", "GET", true);
     if ((result as DefaultResponseType).redirect) {
-      return this.openNewRoute((result as DefaultResponseType).redirect as string);
+      return this.openNewRoute(
+        (result as DefaultResponseType).redirect as string
+      );
     }
 
-    if (
-      (result as DefaultResponseType).error ||
-      !(result as OperationRequestType).response ||
-      ((result as OperationRequestType).response && (result as OperationRequestType).response.error)
-    ) {
-      return alert(
-        "Возникла ошибка при запросе расходов. Обратитесь в поддержку."
-      );
+    if ((result as DefaultResponseType).error) {
+      console.log((result as DefaultResponseType).message);
     }
 
     this.showRecords((result as OperationRequestType).response);
   }
 
   private showRecords(categoriesArray: OperationType[]): void {
-    if(this.categoryElement){
+    if (this.categoryElement) {
       for (let i = 0; i < categoriesArray.length; i++) {
         const optionElement = document.createElement("option");
         this.optionElementValue = (categoriesArray[0].id as number).toString();
@@ -184,11 +171,10 @@ export class profitExpensesCreate {
         optionElement.innerText = categoriesArray[i].title as string;
         this.categoryElement.appendChild(optionElement);
       }
-  
+
       this.categoryElement.addEventListener("change", (e: Event) => {
         this.optionElementValue = (e.target as HTMLOptionElement).value;
       });
     }
-    
   }
 }

@@ -2,18 +2,21 @@ import { Router } from "../../router";
 import { DefaultResponseType } from "../../types/default-response.type";
 import { OperationRequestType } from "../../types/operation-request.type";
 import { OperationType } from "../../types/operation.type";
+import { openRoute } from "../../types/routes.type";
 import { HttpUtils } from "../../utils/http-utils";
 
 export class Profit {
   private popUpElement: HTMLElement | null;
   private confirmButton: HTMLLinkElement | null;
   private canceledButton: HTMLElement | null;
-  private openNewRoute: any;
+  private openNewRoute: openRoute;
 
-  constructor(openNewRoute: Router) {
-    this.openNewRoute = openNewRoute;
+  constructor(fn: openRoute) {
+    this.openNewRoute = fn;
     this.popUpElement = document.getElementById("deleteProfit");
-    this.confirmButton = document.getElementById("confirm-button") as HTMLLinkElement;
+    this.confirmButton = document.getElementById(
+      "confirm-button"
+    ) as HTMLLinkElement;
     this.canceledButton = document.getElementById("canceled-button");
     this.getProfit().then();
   }
@@ -27,15 +30,8 @@ export class Profit {
       );
     }
 
-    if (
-      (result as DefaultResponseType).error ||
-      !(result as OperationRequestType).response ||
-      ((result as OperationRequestType).response &&
-        (result as OperationRequestType).response.error)
-    ) {
-      return alert(
-        "Возникла ошибка при запросе доходов. Обратитесь в поддержку."
-      );
+    if ((result as DefaultResponseType).error) {
+      console.log((result as DefaultResponseType).message);
     }
 
     this.showRecords((result as OperationRequestType).response);
@@ -83,12 +79,14 @@ export class Profit {
       }
     }
 
-    const cardWrappAddElement: HTMLElement | null = document.createElement("div");
+    const cardWrappAddElement: HTMLElement | null =
+      document.createElement("div");
     cardWrappAddElement.className = "col ps-0 pe-3";
     const cardAddElement: HTMLElement | null = document.createElement("div");
     cardAddElement.className =
       "card p-3 h-100 justify-content-center text-center";
-    const cardButtonCreateElement: HTMLAnchorElement | null = document.createElement("a");
+    const cardButtonCreateElement: HTMLAnchorElement | null =
+      document.createElement("a");
     cardButtonCreateElement.href = "/profit-create";
     cardButtonCreateElement.innerHTML = `<svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path
@@ -98,25 +96,26 @@ export class Profit {
 
     cardAddElement.appendChild(cardButtonCreateElement);
     cardWrappAddElement.appendChild(cardAddElement);
-    if(recordsElement){
+    if (recordsElement) {
       recordsElement.appendChild(cardWrappAddElement);
     }
-    
+
     this.activateDeleteButton();
   }
 
   private activateDeleteButton(): void {
-    const deleteButtons: NodeListOf<HTMLLinkElement> = document.querySelectorAll(".delete-button");
+    const deleteButtons: NodeListOf<HTMLLinkElement> =
+      document.querySelectorAll(".delete-button");
     if (deleteButtons) {
       Array.from(deleteButtons).forEach((link) => {
         link.addEventListener("click", (event) => {
-          if(this.popUpElement && this.confirmButton){
+          if (this.popUpElement && this.confirmButton) {
             this.popUpElement.style.display = "flex";
             event.preventDefault();
             this.confirmButton.addEventListener("click", () => {
               const url = new URLSearchParams(window.location.search);
               const id = url.get("id");
-              if(this.confirmButton){
+              if (this.confirmButton) {
                 this.confirmButton.href = "/profit-delete?id=" + id;
               }
             });

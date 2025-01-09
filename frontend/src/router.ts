@@ -15,7 +15,7 @@ import { Profit } from "./components/profit/profit";
 import { ProfitCreate } from "./components/profit/profit-create";
 import { ProfitDelete } from "./components/profit/profit-delete";
 import { ProfitEdit } from "./components/profit/profit-edit";
-import { RoutesType } from "./types/routes.type";
+import { openRoute, RoutesType } from "./types/routes.type";
 
 export class Router {
   
@@ -23,7 +23,7 @@ export class Router {
   readonly contentPageElement: HTMLElement | null;
   readonly indexStyleSheetElement: HTMLElement | null;
   private routes: RoutesType[];
-  
+   
 
   constructor() {
     this.titlePageElement = document.getElementById("page-title");
@@ -39,7 +39,7 @@ export class Router {
         filePathTemplate: "/templates/pages/dashboard.html",
         useLayout: "/templates/layout.html",
         load: () => {
-          new Dashboard(this.openNewRoute());
+          new Dashboard(this.openNewRoute.bind(this));
           new Layout(this.openNewRoute.bind(this));
         },
       },
@@ -54,9 +54,7 @@ export class Router {
         title: "Вход в систему",
         filePathTemplate: "/templates/pages/auth/login.html",
         useLayout: false,
-        load: () => {
-          new Login(this.openNewRoute.bind(this));
-        },
+        load: () => new Login(this.openNewRoute.bind(this)),
         styles: ["login.css"],
       },
       {
@@ -64,16 +62,12 @@ export class Router {
         title: "Регистрация",
         filePathTemplate: "/templates/pages/auth/sign-up.html",
         useLayout: false,
-        load: () => {
-          new SignUp(this.openNewRoute.bind(this));
-        },
+        load: () => new SignUp(this.openNewRoute.bind(this)),
         styles: ["login.css"],
       },
       {
         route: "/logout",
-        load: () => {
-          new Logout(this.openNewRoute.bind(this));
-        },
+        load: () => new Logout(this.openNewRoute.bind(this)),
       },
       {
         route: "/profit",
@@ -90,9 +84,7 @@ export class Router {
       },
       {
         route: "/profit-delete",
-        load: () => {
-          new ProfitDelete(this.openNewRoute.bind(this));
-        },
+        load: () => new ProfitDelete(this.openNewRoute.bind(this)),
       },
       {
         route: "/profit-create",
@@ -126,9 +118,7 @@ export class Router {
       },
       {
         route: "/expenses-delete",
-        load: () => {
-          new ExpensesDelete(this.openNewRoute.bind(this));
-        },
+        load: () => new ExpensesDelete(this.openNewRoute.bind(this)),
       },
       {
         route: "/expenses-edit",
@@ -162,9 +152,7 @@ export class Router {
       },
       {
         route: "/operations-delete",
-        load: () => {
-          new profitExpensesDelete(this.openNewRoute.bind(this));
-        },
+        load: () => new profitExpensesDelete(this.openNewRoute.bind(this)),
       },
       {
         route: "/operations-edit",
@@ -183,8 +171,8 @@ export class Router {
         useLayout: "/templates/layout.html",
         load: () => {
           new profitExpensesCreate(this.openNewRoute.bind(this));
-          new Layout(this.openNewRoute());
-        },
+          new Layout(this.openNewRoute.bind(this));
+        }
       },
     ];
   }
@@ -195,11 +183,11 @@ export class Router {
     document.addEventListener("click", this.clickHandler.bind(this));
   }
 
-  public openNewRoute(url: any | null): void {
+  public async openNewRoute(url: string): Promise<void> {
     const currentRoute: string = window.location.pathname;
     history.pushState({}, "", url);
     if (currentRoute) {
-      this.activateRoute(null, currentRoute);
+      await this.activateRoute(null, currentRoute);
     }
   }
 

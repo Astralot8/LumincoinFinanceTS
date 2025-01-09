@@ -2,6 +2,7 @@ import { Router } from "../../router";
 import { DefaultResponseType } from "../../types/default-response.type";
 import { OperationRequestType } from "../../types/operation-request.type";
 import { OperationType } from "../../types/operation.type";
+import { openRoute } from "../../types/routes.type";
 import { HttpUtils } from "../../utils/http-utils";
 
 export class ProfitEdit {
@@ -10,33 +11,34 @@ export class ProfitEdit {
   private profitTitleErrorElement: HTMLElement | null;
   private id: string | null;
 
-  private openNewRoute: any;
+  private openNewRoute: openRoute;
 
-  constructor(openNewRoute: Router) {
-    this.openNewRoute = openNewRoute;
-    
+  constructor(fn: openRoute) {
+    this.openNewRoute = fn;
+
     this.editButton = document.getElementById("edit-button");
-    this.profitTitleElement = document.getElementById("profit-title") as HTMLInputElement;
+    this.profitTitleElement = document.getElementById(
+      "profit-title"
+    ) as HTMLInputElement;
     this.profitTitleErrorElement =
       document.getElementById("profit-title-error");
 
     const url: URLSearchParams = new URLSearchParams(window.location.search);
     this.id = url.get("id");
     this.getProfitItemInfo();
-    if(this.editButton){
+    if (this.editButton) {
       this.editButton.addEventListener("click", this.editProfitItem.bind(this));
     }
   }
 
   private async getProfitItemInfo(): Promise<void> {
-    const result: DefaultResponseType | OperationRequestType = await HttpUtils.request(
-      "/categories/income/" + this.id,
-      "GET",
-      true
-    );
+    const result: DefaultResponseType | OperationRequestType =
+      await HttpUtils.request("/categories/income/" + this.id, "GET", true);
     if (result || !(result as OperationRequestType).response.error) {
-      if(this.profitTitleElement){
-        this.profitTitleElement.value = (result as OperationRequestType).response.title;
+      if (this.profitTitleElement) {
+        this.profitTitleElement.value = (
+          result as OperationRequestType
+        ).response.title;
       }
     }
   }
@@ -48,7 +50,7 @@ export class ProfitEdit {
       });
       this.openNewRoute("/profit");
     } else {
-      if(this.profitTitleErrorElement){
+      if (this.profitTitleErrorElement) {
         this.profitTitleErrorElement.classList.remove("d-none");
       }
     }

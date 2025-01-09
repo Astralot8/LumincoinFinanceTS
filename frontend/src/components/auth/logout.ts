@@ -1,11 +1,12 @@
 import { Router } from "../../router";
+import { openRoute } from "../../types/routes.type";
 import { AuthUtils } from "../../utils/auth-utils";
 
 export class Logout {
-  private openNewRoute: any;
+  private openNewRoute: openRoute;
 
-  constructor(openNewRoute: Router) {
-    this.openNewRoute = openNewRoute;
+  constructor(fn: openRoute) {
+    this.openNewRoute = fn;
     if (
       !AuthUtils.getAuthInfo(AuthUtils.accessTokenKey) ||
       !AuthUtils.getAuthInfo(AuthUtils.refreshTokenKey)

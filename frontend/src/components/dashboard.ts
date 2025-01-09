@@ -2,6 +2,7 @@ import { Router } from "../router";
 import { DefaultResponseType } from "../types/default-response.type";
 import { OperationRequestType } from "../types/operation-request.type";
 import { OperationType } from "../types/operation.type";
+import { openRoute } from "../types/routes.type";
 import { DateUtils } from "../utils/date-utils";
 import { HttpUtils } from "../utils/http-utils";
 
@@ -45,10 +46,10 @@ export class Dashboard {
   private incomeChartArrayConcat: any;
   private expenseChartArrayConcat: any;
 
-  private openNewRoute: any;
+  private openNewRoute: openRoute;
 
-  constructor(openNewRoute: Router) {
-    this.openNewRoute = openNewRoute;
+  constructor(fn: openRoute) {
+    this.openNewRoute = fn;
     this.recordsElement = document.getElementById("records");
     this.popUpElement = document.getElementById("deleteOperation");
 
@@ -218,10 +219,8 @@ export class Dashboard {
           (result as DefaultResponseType).redirect as string
         );
       }
-
       if (
         (result as DefaultResponseType).error ||
-        !(result as OperationRequestType).response ||
         ((result as OperationRequestType).response &&
           (result as OperationRequestType).response.error)
       ) {
@@ -237,15 +236,8 @@ export class Dashboard {
         );
       }
 
-      if (
-        (result as DefaultResponseType).error ||
-        !(result as OperationRequestType).response ||
-        ((result as OperationRequestType).response &&
-          (result as OperationRequestType).response.error)
-      ) {
-        return alert(
-          "Возникла ошибка при запросе операций. Обратитесь в поддержку."
-        );
+      if ((result as DefaultResponseType).error) {
+        console.log((result as DefaultResponseType).message);
       }
     }
 
@@ -279,9 +271,11 @@ export class Dashboard {
       }
     }
 
-    let tempObjIncome: any;
+    let tempObjIncome: any = {
+      
+    };
 
-    this.incomeChartArray.map((object: OperationType) => {
+    this.incomeChartArray.map((object: OperationType)=> {
       if (object.category !== undefined) {
         tempObjIncome[object.category] =
           (tempObjIncome[object.category] || 0) + object.amount;
@@ -294,7 +288,9 @@ export class Dashboard {
         amount: tempObjIncome[key],
       });
     }
-    let tempObjExpense: any;
+    let tempObjExpense: any = {
+      
+    };
 
     this.expenseChartArray.map((object) => {
       if (object.category !== undefined) {

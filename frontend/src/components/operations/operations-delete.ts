@@ -1,28 +1,30 @@
-import { Router } from "../../router";
 import { DefaultResponseType } from "../../types/default-response.type";
+import { openRoute } from "../../types/routes.type";
 import { HttpUtils } from "../../utils/http-utils";
 
 export class profitExpensesDelete {
   private id: string | null;
-  private openNewRoute: any;
+  private openNewRoute: openRoute;
 
-  constructor(openNewRoute: Router) {
-    this.openNewRoute = openNewRoute;
+  constructor(fn: openRoute) {
+    this.openNewRoute = fn;
     const url: URLSearchParams = new URLSearchParams(window.location.search);
     this.id = url.get("id");
-    this.deleteProfitExpense().then();
+    this.deleteProfitExpense();
   }
 
   private async deleteProfitExpense(): Promise<void> {
-    
-    const response: DefaultResponseType = await HttpUtils.request("/operations/" + this.id, "DELETE", true);
+    const result: DefaultResponseType = await HttpUtils.request(
+      "/operations/" + this.id,
+      "DELETE",
+      true
+    );
 
-    if (response.error) {
-      alert(response.error);
-      if(response.redirect){
-        this.openNewRoute(response.redirect)
-      }
-    }
-    return this.openNewRoute('/operations');
+    // if (result.error) {
+    //   alert("Не удалось удалить элемент, попробуйте позже.");
+    // }
+
+    this.openNewRoute("/operations");
+    return;
   }
 }

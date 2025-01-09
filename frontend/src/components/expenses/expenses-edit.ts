@@ -1,6 +1,7 @@
 import { Router } from "../../router";
 import { DefaultResponseType } from "../../types/default-response.type";
 import { OperationRequestType } from "../../types/operation-request.type";
+import { openRoute } from "../../types/routes.type";
 import { HttpUtils } from "../../utils/http-utils";
 
 export class ExpensesEdit {
@@ -9,10 +10,10 @@ export class ExpensesEdit {
   private expenseTitleErrorElement: HTMLElement | null;
   private id: string | null;
 
-  private openNewRoute: any;
+  private openNewRoute: openRoute;
 
-  constructor(openNewRoute: Router) {
-    this.openNewRoute = openNewRoute;
+  constructor(fn: openRoute) {
+    this.openNewRoute = fn;
     this.editButton = document.getElementById("edit-button");
     this.expenseTitleElement = document.getElementById(
       "expense-title"
@@ -33,13 +34,15 @@ export class ExpensesEdit {
   }
 
   private async getExpenseItemInfo(): Promise<void> {
-    const result: DefaultResponseType | OperationRequestType = await HttpUtils.request(
-      "/categories/expense/" + this.id,
-      "GET",
-      true
-    );
-    if ((result || !(result as OperationRequestType).response.error) && this.expenseTitleElement) {
-      this.expenseTitleElement.value = (result as OperationRequestType).response.title;
+    const result: DefaultResponseType | OperationRequestType =
+      await HttpUtils.request("/categories/expense/" + this.id, "GET", true);
+    if (
+      (result || !(result as OperationRequestType).response.error) &&
+      this.expenseTitleElement
+    ) {
+      this.expenseTitleElement.value = (
+        result as OperationRequestType
+      ).response.title;
     }
   }
 
@@ -50,7 +53,7 @@ export class ExpensesEdit {
       });
       this.openNewRoute("/expenses");
     } else {
-      if(this.expenseTitleErrorElement){
+      if (this.expenseTitleErrorElement) {
         this.expenseTitleErrorElement.classList.remove("d-none");
       }
     }

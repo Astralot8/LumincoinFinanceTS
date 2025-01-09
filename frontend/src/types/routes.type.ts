@@ -5,4 +5,7 @@ export type RoutesType = {
   useLayout?: string | boolean,
   load?(): void,
   styles?: string[],
+  
 };
+
+export type openRoute = (url: string) => Promise<void>;

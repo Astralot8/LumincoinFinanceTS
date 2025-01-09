@@ -1,14 +1,15 @@
 import { Router } from "../../router";
 import { DefaultResponseType } from "../../types/default-response.type";
+import { openRoute } from "../../types/routes.type";
 import { HttpUtils } from "../../utils/http-utils";
 
 export class ExpensesDelete {
   private id: string | null;
 
-  private openNewRoute: any;
+  private openNewRoute: openRoute;
 
-  constructor(openNewRoute: Router) {
-    this.openNewRoute = openNewRoute;
+  constructor(fn: openRoute) {
+    this.openNewRoute = fn;
     const url: URLSearchParams = new URLSearchParams(window.location.search);
     this.id = url.get("id");
 
