@@ -10,11 +10,13 @@ export class profitExpensesDelete {
     this.openNewRoute = fn;
     const url: URLSearchParams = new URLSearchParams(window.location.search);
     this.id = url.get("id");
-    this.deleteProfitExpense();
+    this.deleteProfitExpense().then();
+    this.openNewRoute("/operations");
+    return;
   }
 
   private async deleteProfitExpense(): Promise<void> {
-    const result: DefaultResponseType = await HttpUtils.request(
+    await HttpUtils.request(
       "/operations/" + this.id,
       "DELETE",
       true
@@ -24,7 +26,6 @@ export class profitExpensesDelete {
     //   alert("Не удалось удалить элемент, попробуйте позже.");
     // }
 
-    this.openNewRoute("/operations");
-    return;
+    
   }
 }

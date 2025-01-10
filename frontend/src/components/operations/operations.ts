@@ -299,7 +299,7 @@ export class ProfitExpenses {
               if (this.confirmButton) {
                 this.confirmButton.href = "/operations-delete?id=" + id;
               }
-            });
+            }, { once: true });
           }
         });
       });
