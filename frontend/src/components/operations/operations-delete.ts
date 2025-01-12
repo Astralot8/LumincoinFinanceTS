@@ -26,7 +26,7 @@ export class profitExpensesDelete {
     //   alert("Не удалось удалить элемент, попробуйте позже.");
     // }
 
-    return;
+    // return;
     
   }
 }

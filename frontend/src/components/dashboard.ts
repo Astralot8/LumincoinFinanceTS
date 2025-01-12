@@ -8,6 +8,7 @@ import { HttpUtils } from "../utils/http-utils";
 
 import { Chart } from "chart.js/auto";
 
+
 export class Dashboard {
   private recordsElement: HTMLElement | null;
   private popUpElement: HTMLElement | null;
