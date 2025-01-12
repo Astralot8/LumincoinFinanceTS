@@ -62,7 +62,6 @@ export class SignUp {
       this.repeatPasswordElement &&
       this.repeatPasswordErrorElement
     ) {
-      isValid = false;
       if (
         this.fullNameElement.value &&
         this.fullNameElement.value.match(
@@ -123,6 +122,7 @@ export class SignUp {
       this.repeatPasswordElement
     ) {
       this.commonErrorElement.classList.add("d-none");
+      console.log(this.validateForm());
       if (this.validateForm()) {
         const fullNameArray: string[] = this.fullNameElement.value.split(" ");
 

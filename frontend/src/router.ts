@@ -55,7 +55,7 @@ export class Router {
         filePathTemplate: "/templates/pages/auth/login.html",
         useLayout: false,
         load: () => new Login(this.openNewRoute.bind(this)),
-        styles: ["login.css"],
+        
       },
       {
         route: "/sign-up",
@@ -63,7 +63,7 @@ export class Router {
         filePathTemplate: "/templates/pages/auth/sign-up.html",
         useLayout: false,
         load: () => new SignUp(this.openNewRoute.bind(this)),
-        styles: ["login.css"],
+        
       },
       {
         route: "/logout",

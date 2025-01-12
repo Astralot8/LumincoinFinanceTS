@@ -16,7 +16,7 @@ export class profitExpensesDelete {
   }
 
   private async deleteProfitExpense(): Promise<void> {
-    await HttpUtils.request(
+    const result: DefaultResponseType = await HttpUtils.request(
       "/operations/" + this.id,
       "DELETE",
       true
@@ -26,6 +26,7 @@ export class profitExpensesDelete {
     //   alert("Не удалось удалить элемент, попробуйте позже.");
     // }
 
+    return;
     
   }
 }

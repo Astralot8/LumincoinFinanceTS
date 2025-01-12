@@ -46,6 +46,7 @@ module.exports = {
           { from: "./node_modules/bootstrap/dist/js/bootstrap.bundle.min.js", to: "scripts" },
           { from: "./node_modules/chart.js/dist/chart.umd.js", to: "scripts" },
           { from: "./node_modules/chart.js/dist/chart.js", to: "scripts" },
+          { from: "./node_modules/@kurkle/color/dist/color.esm.js", to: "scripts" },
           { from: "./node_modules/bootstrap/dist/css/bootstrap.min.css", to: "css" },
           { from: "./src/styles", to: "css" },
         ],
