@@ -80,7 +80,7 @@ export class Layout {
       return this.openNewRoute((result as DefaultResponseType).redirect as string);
     }
     if (this.balanceElement) {
-      if (result) {
+      if (result || !(result as DefaultResponseType).error) {
         this.balanceElement.innerText = (result as BalanceType).response.balance + "$";
         this.balanceValue = (result as BalanceType).response.balance;
       } else {

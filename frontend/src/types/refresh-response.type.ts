@@ -1,5 +1,5 @@
 export type RefreshResponseType = {
-    error?: boolean,
+    error: boolean,
     tokens?: RefreshTokensType,
     message?: string,
 }

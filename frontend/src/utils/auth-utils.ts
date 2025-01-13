@@ -45,7 +45,7 @@ export class AuthUtils {
 
   public static async updateAccessToken(): Promise<boolean> {
     let result: boolean = false;
-    const refreshToken: string = this.getAuthInfo(this.refreshTokenKey) as string;
+    const refreshToken: string | null = this.getAuthInfo(this.refreshTokenKey) as string;
     const userInfo2: UserInfoType = JSON.parse((this.getAuthInfo("userInfo") as string));
     if (refreshToken) {
       const response: Response = await fetch(config.api + "/refresh", {

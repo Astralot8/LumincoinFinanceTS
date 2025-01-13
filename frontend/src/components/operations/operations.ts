@@ -301,7 +301,7 @@ export class ProfitExpenses {
               }
             }, { once: true });
           }
-        });
+        }, { once: true });
       });
     }
   }

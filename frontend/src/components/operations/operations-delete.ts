@@ -12,21 +12,17 @@ export class profitExpensesDelete {
     this.id = url.get("id");
     this.deleteProfitExpense().then();
     this.openNewRoute("/operations");
-    return;
   }
 
   private async deleteProfitExpense(): Promise<void> {
-    const result: DefaultResponseType = await HttpUtils.request(
-      "/operations/" + this.id,
-      "DELETE",
-      true
-    );
+    const response: DefaultResponseType = await HttpUtils.request("/operations/" + this.id, "DELETE", true);
 
-    // if (result.error) {
-    //   alert("Не удалось удалить элемент, попробуйте позже.");
+    // if (response.error === false) {
+    //   response.redirect ? this.openNewRoute(response.redirect) : null;
+    //   return;
+    // } else {
+      
+    //   return;
     // }
-
-    // return;
-    
   }
 }
