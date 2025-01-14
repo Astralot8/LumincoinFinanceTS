@@ -1,4 +1,4 @@
-import { Router } from "../../router";
+
 import { DefaultResponseType } from "../../types/default-response.type";
 import { openRoute } from "../../types/routes.type";
 import { HttpUtils } from "../../utils/http-utils";
@@ -26,6 +26,7 @@ export class ProfitDelete {
     if (result.error) {
       alert("Не удалось удалить элемент, попробуйте позже.");
     }
+
     this.openNewRoute("/profit");
     return;
   }

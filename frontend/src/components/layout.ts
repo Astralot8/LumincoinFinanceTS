@@ -1,5 +1,4 @@
-import { Router } from "../router";
-import { BalanceResponseType, BalanceType } from "../types/balance.type";
+import { BalanceType } from "../types/balance.type";
 import { DefaultResponseType } from "../types/default-response.type";
 import { openRoute } from "../types/routes.type";
 import { UserInfoType } from "../types/user-info.type";

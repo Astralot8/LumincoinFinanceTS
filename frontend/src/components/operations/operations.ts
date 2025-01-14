@@ -1,4 +1,4 @@
-import { Router } from "../../router";
+
 import { DefaultResponseType } from "../../types/default-response.type";
 import { OperationRequestType } from "../../types/operation-request.type";
 import { OperationType } from "../../types/operation.type";
@@ -82,9 +82,7 @@ export class ProfitExpenses {
 
     this.getProfitExpenses();
     this.watchActiveButton(this.filterButtonsArray);
-    
   }
-
 
   private watchActiveButton(buttonsArray: HTMLElement[] | null): void {
     if (buttonsArray) {
@@ -289,19 +287,34 @@ export class ProfitExpenses {
       document.querySelectorAll(".delete-button");
     if (deleteButtons) {
       Array.from(deleteButtons).forEach((link) => {
-        link.addEventListener("click", (event) => {
-          if (this.popUpElement && this.confirmButton) {
-            this.popUpElement.style.display = "flex";
-            event.preventDefault();
-            this.confirmButton.addEventListener("click", () => {
-              const url: URLSearchParams = new URLSearchParams(window.location.search);
-              const id: string | null = url.get("id");
-              if (this.confirmButton) {
-                this.confirmButton.href = "/operations-delete?id=" + id;
-              }
-            }, { once: true });
-          }
-        }, { once: true });
+        link.addEventListener(
+          "click",
+          (event) => {
+            if (this.popUpElement && this.confirmButton) {
+              this.popUpElement.style.display = "flex";
+              event.preventDefault();
+              this.confirmButton.addEventListener(
+                "click",
+                (event) => {
+                  const url: URLSearchParams = new URLSearchParams(
+                    window.location.search
+                  );
+                  const id: string | null = url.get("id");
+                  if (this.confirmButton && id) {
+                    this.confirmButton.href = "/operations-delete?id=" + id;
+                  } else {
+                    if (this.popUpElement) {
+                      this.popUpElement.style.display = "none";
+                    }
+                  }
+                  event.preventDefault();
+                },
+                { once: true }
+              );
+            }
+          },
+          { once: true }
+        );
       });
     }
   }

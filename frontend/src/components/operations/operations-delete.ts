@@ -11,18 +11,16 @@ export class profitExpensesDelete {
     const url: URLSearchParams = new URLSearchParams(window.location.search);
     this.id = url.get("id");
     this.deleteProfitExpense().then();
-    this.openNewRoute("/operations");
   }
 
   private async deleteProfitExpense(): Promise<void> {
-    const response: DefaultResponseType = await HttpUtils.request("/operations/" + this.id, "DELETE", true);
+    const result: DefaultResponseType = await HttpUtils.request("/operations/" + this.id, "DELETE", true);
 
-    // if (response.error === false) {
-    //   response.redirect ? this.openNewRoute(response.redirect) : null;
-    //   return;
-    // } else {
-      
-    //   return;
-    // }
+    if (result.error) {
+      alert("Не удалось удалить элемент, попробуйте позже.");
+    }
+    
+    this.openNewRoute("/operations");
+    return;
   }
 }
